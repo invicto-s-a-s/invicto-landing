@@ -1,45 +1,66 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #141314;
-  --color-surface: #141314;
-  --color-surface-dim: #141314;
-  --color-surface-bright: #3a393a;
-  --color-surface-container-lowest: #0f0e0f;
-  --color-surface-container-low: #1c1b1c;
-  --color-surface-container: #201f20;
-  --color-surface-container-high: #2b2a2b;
-  --color-surface-container-highest: #363435;
-  --color-on-background: #e6e1e2;
-  --color-on-surface: #e6e1e2;
-  --color-on-surface-variant: #c4c9b0;
-  --color-outline: #8e937c;
-  --color-neon: #c4f750;
-  --color-primary: #c4f750;
-  --color-secondary: #6bdf4e;
+  --color-background: #0D0D0D;
+  --color-surface: #0D0D0D;
+  --color-surface-dim: #080808;
+  --color-surface-bright: #2a2a2a;
+  --color-surface-container-lowest: #060606;
+  --color-surface-container-low: #0F0F0F;
+  --color-surface-container: #141414;
+  --color-surface-container-high: #1E1E1E;
+  --color-surface-container-highest: #282828;
+  --color-on-background: #F0F0F0;
+  --color-on-surface: #F0F0F0;
+  --color-on-surface-variant: #AAAAAA;
+  --color-outline: #555555;
+  --color-neon: #AAFF00;
+  --color-primary: #AAFF00;
+  --color-secondary: #88DD00;
 
-  --font-headline: var(--font-chakra-petch), "Chakra Petch", "Anybody", sans-serif;
+  --font-headline: var(--font-chakra-petch), "Chakra Petch", sans-serif;
   --font-body: var(--font-hanken-grotesk), "Hanken Grotesk", sans-serif;
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
 
   --animate-pulse-glow: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-scanline: scanline 10s linear infinite;
   --animate-float: float 6s ease-in-out infinite;
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 5px rgba(196, 247, 80, 0.2); }
-  50% { box-shadow: 0 0 25px rgba(196, 247, 80, 0.6); }
-}
-
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(1000%); }
+  0%, 100% { box-shadow: 0 0 10px rgba(170, 255, 0, 0.25), 0 0 30px rgba(170, 255, 0, 0.1); }
+  50% { box-shadow: 0 0 30px rgba(170, 255, 0, 0.6), 0 0 80px rgba(170, 255, 0, 0.3); }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-16px); }
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-1%, -2%); }
+  20% { transform: translate(2%, 1%); }
+  30% { transform: translate(-2%, 2%); }
+  40% { transform: translate(1%, -1%); }
+  50% { transform: translate(-1%, 3%); }
+  60% { transform: translate(3%, -2%); }
+  70% { transform: translate(-2%, 1%); }
+  80% { transform: translate(2%, -1%); }
+  90% { transform: translate(-1%, 2%); }
+}
+
+.grain-overlay {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  animation: grain 0.6s steps(1) infinite;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
 }
 
 .skew-card {
@@ -50,48 +71,17 @@
   transform: skewX(6deg);
 }
 
-.reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.17, 0.55, 0.55, 1);
-}
-
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.scan-line-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, transparent, rgba(196, 247, 80, 0.03) 50%, transparent);
-  pointer-events: none;
-  z-index: 1;
+.text-glow {
+  text-shadow: 0 0 20px rgba(170, 255, 0, 0.7), 0 0 60px rgba(170, 255, 0, 0.3);
 }
 
 .radar-grid {
-  background-image: radial-gradient(circle, rgba(196, 247, 80, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(170, 255, 0, 0.07) 1px, transparent 1px);
   background-size: 40px 40px;
-  background-attachment: fixed;
-}
-
-.text-glow {
-  text-shadow: 0 0 15px rgba(196, 247, 80, 0.4);
 }
 
 .kinetic-border {
-  border-left: 4px solid #c4f750;
-}
-
-.bg-noise {
-  background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
-  opacity: 0.05;
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+  border-left: 3px solid #AAFF00;
 }
 
 .material-symbols-outlined {
