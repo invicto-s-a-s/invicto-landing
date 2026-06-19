@@ -26,8 +26,10 @@ const SOCIAL_LINKS = [
     name: "Instagram",
     href: "https://www.instagram.com/invictoapp?utm_source=qr&igsh=MzVwb2NjOTV4cnZo",
     icon: (
-      <svg className="w-full h-full fill-current" viewBox="0 0 24 24">
-        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm3.6 6.02h-1.848v-1.84c0-.497.416-.898.93-.898.325 0 .595.202.74.486h.177V5.1zm-1.85 2.63H12v5.97c0 1.27-.883 2.35-2.08 2.35-1.197 0-2.08-1.08-2.08-2.35v-5.97h-1.35v5.97c0 1.95 1.49 3.52 3.43 3.52s3.43-1.57 3.43-3.52v-5.97zm2.1-.25h1.35V15.6c0 1.272.883 2.352 2.08 2.352 1.197 0 2.08-1.08 2.08-2.352v-5.97h1.35v5.97c0 1.95-1.49 3.52-3.43 3.52s-3.43-1.57-3.43-3.52v-5.97z" />
+      <svg className="w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+        <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/>
       </svg>
     ),
   },
@@ -35,8 +37,8 @@ const SOCIAL_LINKS = [
     name: "TikTok",
     href: "https://www.tiktok.com/@invicto.app?_r=1&_t=ZS-974saShwmG1",
     icon: (
-      <svg className="w-full h-full fill-current" viewBox="0 0 24 24">
-        <path d="M19.321 5.562a5.122 5.122 0 01-.868-.074c.356-1.327.321-2.415-.213-3.247-.534-.832-1.476-1.366-2.826-1.602-1.35-.236-2.878.068-4.583.91-1.706.842-2.833 2.12-3.381 3.834-.548 1.714-.548 3.536 0 5.465l.139 1.118c-1.05.353-2.071.795-3.066 1.328-1.528.823-2.872 1.918-4.032 3.284C.395 17.243-.166 19.16.087 21.256c.253 2.096 1.323 3.94 3.21 5.532 1.888 1.59 4.228 2.386 7.031 2.386 3.08 0 5.77-.968 8.07-2.904 2.3-1.937 3.45-4.527 3.45-7.771V8.918c.895.709 1.99 1.328 3.284 1.857 1.295.529 2.386.794 3.275.794v-4.093c-1.189 0-2.421-.354-3.695-1.063-1.275-.71-2.316-1.644-3.125-2.804z" />
+      <svg className="w-full h-full" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.32 1.78-3.41 2.86-5.55 2.89-1.34.05-2.67-.38-3.78-1.07-1.96-1.23-3.23-3.42-3.34-5.73-.01-.45-.01-.9 0-1.35.14-2.17 1.16-4.27 2.82-5.68 1.84-1.56 4.37-2.3 6.74-1.9.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
       </svg>
     ),
   },
@@ -44,7 +46,7 @@ const SOCIAL_LINKS = [
 
 export default function Footer({ onCTAClick }: FooterProps) {
   return (
-    <footer className="py-16 bg-background border-t border-white/5 relative z-10">
+    <footer className="py-16 border-t border-neon/10 relative z-10" style={{ background: "rgb(13 13 13 / 0.75)" }}>
       <div className="max-w-7xl mx-auto px-6">
         {/* Top row */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10 mb-12">

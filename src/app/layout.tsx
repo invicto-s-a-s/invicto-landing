@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className="bg-background text-on-background font-body overflow-x-hidden">
+      <body className="text-on-background font-body overflow-x-hidden bg-transparent" suppressHydrationWarning>
         {children}
       </body>
     </html>

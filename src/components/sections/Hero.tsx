@@ -36,14 +36,18 @@ export default function Hero({ onCTAClick }: HeroProps) {
   return (
     <section
       ref={ref}
-      className="relative min-h-screen flex items-center overflow-hidden bg-background pt-20"
+      className="relative min-h-screen flex items-center overflow-hidden pt-20"
     >
-      {/* Radar grid background */}
-      <div className="absolute inset-0 radar-grid opacity-30 pointer-events-none" />
+      {/* Gradient overlay: dark on left for text, transparent on right for aurora */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none z-0" />
 
-      {/* Neon ambient glows */}
-      <div className="absolute -bottom-40 -left-40 w-[750px] h-[750px] rounded-full bg-neon opacity-[0.05] blur-[180px] pointer-events-none" />
-      <div className="absolute top-[10%] -right-20 w-[500px] h-[500px] rounded-full bg-neon opacity-[0.03] blur-[130px] pointer-events-none" />
+      {/* Radar grid background */}
+      <div className="absolute inset-0 radar-grid opacity-20 pointer-events-none" />
+
+      {/* Neon ambient glows — amplified to complement aurora */}
+      <div className="absolute -bottom-40 -left-40 w-[750px] h-[750px] rounded-full bg-neon opacity-[0.08] blur-[180px] pointer-events-none" />
+      <div className="absolute top-[10%] -right-20 w-[500px] h-[500px] rounded-full bg-neon opacity-[0.06] blur-[130px] pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-32 lg:py-0 min-h-screen flex items-center">
         <div className="flex flex-col lg:flex-row items-center gap-16 w-full">

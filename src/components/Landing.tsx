@@ -20,15 +20,6 @@ export default function Landing() {
 
   return (
     <>
-      {/* Background image */}
-      <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
-        style={{
-          backgroundImage: "url('/Imagen-BG.png')",
-          opacity: 0.35,
-        }}
-      />
-
       {/* Film grain overlay */}
       <div className="grain-overlay" />
 
