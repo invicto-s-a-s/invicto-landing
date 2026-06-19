@@ -25,7 +25,7 @@ export default function Landing() {
         className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
         style={{
           backgroundImage: "url('/Imagen-BG.png')",
-          opacity: 0.15,
+          opacity: 0.35,
         }}
       />
 
