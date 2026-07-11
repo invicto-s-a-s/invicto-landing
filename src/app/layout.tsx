@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   description:
     "La plataforma de social scouting que conecta el talento con las oportunidades reales mediante tecnología de élite.",
   icons: {
-    icon: "/isotipo-invicto1.png",
+    icon: "/isotipo-invicto2.png",
   },
 };
 
