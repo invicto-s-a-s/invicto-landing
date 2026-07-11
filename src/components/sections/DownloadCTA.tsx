@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 
 const MOCKUP_URL =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuBwrrVJotqSjAiM_IGTD4Rxt7n9RApZdvlv-BfoXAVSZlo3d-QPxMXOq6hNPPTW0s-jAMJdYtqyHMj_CieSWMN5YTOwUOKw7wye2zwa2JoJdTZq-z6kDkF1eGFDY10J4WqHEAEu9hwIbKgABrfAHUXMaitNCe-bAYWCx5RO4nRrvpuqn8ZghfResvVur3yCSiLI5klJI83unG2sMpvBMp-KrgT0mru0sTk4tH9swE4js4ZILLrNswCZ6WmWRfdXIcQi3L7Y8MmM68hr";
+  "/celular-app-invicto-home.jpg"; // Placeholder for the app mockup image
 
 interface DownloadCTAProps {
   onCTAClick: () => void;
