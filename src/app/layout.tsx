@@ -25,9 +25,12 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "INVICTO | Democratizando el Fútbol Profesional",
+  title: "INVICTO",
   description:
     "La plataforma de social scouting que conecta el talento con las oportunidades reales mediante tecnología de élite.",
+  icons: {
+    icon: "/isotipo-invicto1.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

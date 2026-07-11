@@ -38,9 +38,11 @@ export default function Hero({ onCTAClick }: HeroProps) {
       ref={ref}
       className="relative min-h-screen flex items-center overflow-hidden pt-20"
     >
-      {/* Gradient overlay: dark on left for text, transparent on right for aurora */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent pointer-events-none z-0" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none z-0" />
+      {/* Mobile: overlay suave para legibilidad sin tapar la imagen */}
+      <div className="absolute inset-0 bg-black/40 pointer-events-none z-0 md:hidden" />
+      {/* Desktop: gradiente lateral, oscuro a la izquierda, transparente a la derecha */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent pointer-events-none z-0 hidden md:block" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none z-0" />
 
       {/* Radar grid background */}
       <div className="absolute inset-0 radar-grid opacity-20 pointer-events-none" />

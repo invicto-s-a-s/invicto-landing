@@ -4,25 +4,28 @@ html {
   background-color: #050505;
 }
 
-/* Background image on html so it's never covered by body bg */
-html {
-  background-image: url('/Imagen-BG.png');
-  background-size: cover;
-  background-attachment: scroll;
-  background-position: 62% top;  /* mobile: center on player */
-  background-repeat: no-repeat;
-  min-height: 100%;
-}
-
-/* Desktop: fixed parallax effect, full centered */
-@media (min-width: 768px) {
-  html {
-    background-attachment: fixed;
-    background-position: center top;
+  /* Capa fija al viewport: la imagen siempre mide exactamente la pantalla,
+    nunca se estira al alto del documento (evita pixelado y zoom) */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image: url('/vertical-BG-Landing-Page.png'); /* mobile: 9:16 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
-}
 
-/* Body must be transparent so html background shows through */
+  /* Desktop (≥768px): imagen horizontal */
+  @media (min-width: 768px) {
+    body::before {
+      background-image: url('/Imagen-BG.png');
+      background-position: center top;
+    }
+  }
+
+/* Body transparente para que la capa fija siempre se vea */
 body {
   background-color: transparent !important;
 }
