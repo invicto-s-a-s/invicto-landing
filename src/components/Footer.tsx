@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 interface FooterProps {
@@ -7,9 +8,9 @@ interface FooterProps {
 }
 
 const NAV_LINKS = [
-  { label: "Privacidad", href: "#" },
-  { label: "Términos", href: "#" },
-  { label: "Contacto", href: "#" },
+  { label: "Privacidad", href: "/politica-de-privacidad" },
+  { label: "Términos", href: "/terminos-y-condiciones" },
+  { label: "Contacto", href: "mailto:privacidad@invictoapp.com.co" },
 ];
 
 const SOCIAL_LINKS = [
@@ -64,15 +65,20 @@ export default function Footer({ onCTAClick }: FooterProps) {
 
           {/* Links */}
           <div className="flex flex-wrap gap-8">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href + link.label}
-                href={link.href}
-                className="font-mono text-[10px] tracking-[0.3em] uppercase text-on-background/35 hover:text-neon transition-colors duration-200"
-              >
-                {link.label}
-              </a>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isExternal = link.href.startsWith("mailto:") || link.href.startsWith("http");
+              const className =
+                "font-mono text-[10px] tracking-[0.3em] uppercase text-on-background/35 hover:text-neon transition-colors duration-200";
+              return isExternal ? (
+                <a key={link.href + link.label} href={link.href} className={className}>
+                  {link.label}
+                </a>
+              ) : (
+                <Link key={link.href + link.label} href={link.href} className={className}>
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Download */}
