@@ -11,6 +11,10 @@ const NAV_LINKS = [
   { label: "Privacidad", href: "/politica-de-privacidad" },
   { label: "Términos", href: "/terminos-y-condiciones" },
   { label: "Contacto", href: "mailto:privacidad@invictoapp.com.co" },
+  // Entrada al panel del equipo. Va en el pie y no en la cabecera a propósito:
+  // es una herramienta interna, no una llamada a la acción para el visitante.
+  // Quien no tenga permiso solo ve una pantalla de acceso.
+  { label: "Ingresar", href: "/admin" },
 ];
 
 const SOCIAL_LINKS = [
