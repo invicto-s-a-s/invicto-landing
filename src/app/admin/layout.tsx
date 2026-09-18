@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Panel · Invicto",
+  // `absolute` salta la plantilla del layout raíz, que si no dejaba el título
+  // en "Panel · Invicto · Invicto".
+  title: { absolute: "Panel · Invicto" },
   // Fuera de los buscadores: es una herramienta interna colgada de una web
   // pública, y no tiene por qué aparecer cuando alguien busca "Invicto".
   robots: { index: false, follow: false },
