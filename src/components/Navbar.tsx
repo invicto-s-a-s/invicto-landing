@@ -37,8 +37,9 @@ export default function Navbar({ onCTAClick }: NavbarProps) {
         <div className="hidden md:flex gap-8 items-center">
           {[
             { label: "Cómo funciona", href: "#como-funciona" },
+            { label: "Por qué INVICTO", href: "#por-que-invicto" },
             { label: "Características", href: "#caracteristicas" },
-            { label: "Testimonios", href: "#testimonios" },
+            { label: "Ecosistema", href: "#ecosistema" },
           ].map((link) => (
             <a
               key={link.href}
@@ -56,7 +57,7 @@ export default function Navbar({ onCTAClick }: NavbarProps) {
           whileTap={{ scale: 0.95 }}
           className="bg-neon text-background font-headline font-black italic px-7 py-2.5 skew-card transition-shadow duration-300"
         >
-          <span className="skew-content text-sm">DESCARGAR</span>
+          <span className="skew-content text-sm">SOLICITAR ACCESO</span>
         </motion.button>
       </div>
     </motion.nav>

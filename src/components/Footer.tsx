@@ -81,19 +81,13 @@ export default function Footer({ onCTAClick }: FooterProps) {
             })}
           </div>
 
-          {/* Download */}
-          <div className="flex gap-5">
+          {/* Access request */}
+          <div>
             <button
               onClick={onCTAClick}
-              className="font-headline font-black italic text-on-background/40 hover:text-neon transition-colors duration-200 hover:scale-105 transform"
+              className="bg-neon text-background font-headline font-black italic px-6 py-2.5 skew-card hover:shadow-[0_0_30px_rgba(170,255,0,0.4)] transition-shadow duration-300"
             >
-              iOS
-            </button>
-            <button
-              onClick={onCTAClick}
-              className="font-headline font-black italic text-on-background/40 hover:text-neon transition-colors duration-200 hover:scale-105 transform"
-            >
-              ANDROID
+              <span className="skew-content text-sm">SOLICITAR ACCESO</span>
             </button>
           </div>
         </div>

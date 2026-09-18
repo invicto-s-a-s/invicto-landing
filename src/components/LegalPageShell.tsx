@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Footer from "@/components/Footer";
-import DownloadModal from "@/components/DownloadModal";
+import AccessRequestModal from "@/components/AccessRequestModal";
 
 interface LegalPageShellProps {
   title: string;
@@ -61,7 +61,7 @@ export default function LegalPageShell({ title, lastUpdated, children }: LegalPa
       </main>
 
       <Footer onCTAClick={() => setModalOpen(true)} />
-      <DownloadModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <AccessRequestModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </>
   );
 }

@@ -14,9 +14,9 @@ const LINES = [
 ];
 
 const STATS = [
-  { value: "50K+", label: "Jugadores" },
-  { value: "2K+", label: "Scouts activos" },
-  { value: "120+", label: "Países" },
+  { value: "100+", label: "Jugadores" },
+  { value: "Colombia", label: "País de origen" },
+  { value: "Beta", label: "Fase actual" },
 ];
 
 interface HeroProps {
@@ -120,8 +120,8 @@ export default function Hero({ onCTAClick }: HeroProps) {
                 className="relative bg-neon text-background font-headline font-black italic text-lg px-10 py-5 skew-card overflow-hidden group"
               >
                 <span className="skew-content flex items-center gap-3 relative z-10">
-                  DESCARGAR AHORA
-                  <span className="material-symbols-outlined text-xl">download</span>
+                  SOLICITAR ACCESO
+                  <span className="material-symbols-outlined text-xl">arrow_forward</span>
                 </span>
                 <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
               </motion.button>
@@ -194,22 +194,22 @@ export default function Hero({ onCTAClick }: HeroProps) {
                 </div>
               </motion.div>
 
-              {/* Floating: Scout contact */}
+              {/* Floating: New profile */}
               <motion.div
-                className="absolute -right-14 bottom-28 bg-surface-container border border-white/8 p-4 rounded-2xl shadow-2xl z-20 w-[155px]"
+                className="absolute -right-14 bottom-28 bg-surface-container border border-white/8 p-4 rounded-2xl shadow-2xl z-20 w-[165px]"
                 initial={{ opacity: 0, x: 20, scale: 0.85 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 transition={{ delay: 1.7, duration: 0.55, ease: [0.33, 1, 0.68, 1] }}
               >
                 <div className="font-mono text-on-background/35 text-[9px] uppercase tracking-widest mb-1">
-                  Scout contactó
+                  Nuevo perfil
                 </div>
                 <div className="font-headline font-black italic text-sm text-on-background leading-tight">
-                  FC Barcelona B
+                  Medellín, Colombia
                 </div>
                 <div className="flex items-center gap-1.5 mt-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-neon animate-pulse" />
-                  <span className="text-neon text-[10px] font-mono">Hace 3h</span>
+                  <span className="text-neon text-[10px] font-mono">En vivo</span>
                 </div>
               </motion.div>
             </div>

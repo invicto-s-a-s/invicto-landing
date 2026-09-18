@@ -15,7 +15,7 @@ const FEATURES: Record<Tab, { icon: string; title: string; desc: string }[]> = {
     { icon: "fitness_center", title: "Análisis de rendimiento", desc: "Métricas biométricas y físicas integradas para un perfil deportivo completo." },
   ],
   scouts: [
-    { icon: "manage_search", title: "50K+ talentos verificados", desc: "La mayor base de datos de jugadores jóvenes con perfiles verificados y actualizados." },
+    { icon: "manage_search", title: "Base de talentos en crecimiento", desc: "Una comunidad de jugadores jóvenes en Colombia con perfiles verificados y actualizados." },
     { icon: "filter_list", title: "Filtros avanzados", desc: "Busca por posición, edad, país, rating, historial y mucho más con precisión quirúrgica." },
     { icon: "verified_user", title: "Ratings imparciales", desc: "Scores generados por algoritmos objetivos, sin sesgos humanos ni manipulación posible." },
     { icon: "chat", title: "Contacto directo y seguro", desc: "Comunícate con jugadores directamente en la plataforma con privacidad garantizada." },

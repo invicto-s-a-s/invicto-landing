@@ -50,58 +50,49 @@ export default function DownloadCTA({ onCTAClick }: DownloadCTAProps) {
             viewport={{ once: true, margin: "-80px" }}
           >
             <span className="font-mono text-neon text-[10px] tracking-[0.35em] uppercase mb-6 block">
-              Disponible ahora
+              Acceso anticipado · Beta
             </span>
 
             <h2
               className="font-headline font-black italic uppercase text-on-background leading-tight mb-6"
               style={{ fontSize: "clamp(2.2rem, 5vw, 4.5rem)" }}
             >
-              TU PRÓXIMO CONTRATO
+              TU CAMINO EMPIEZA
               <br />
-              <span className="text-neon text-glow">EMPIEZA AQUÍ</span>
+              <span className="text-neon text-glow">DESDE HOY</span>
             </h2>
 
             <p className="text-on-background/50 text-lg leading-relaxed mb-12 max-w-lg">
-              Únete a los 50,000+ jugadores que ya tienen su perfil en INVICTO y a
-              los scouts que los descubren cada día.
+              Sé parte de los primeros jugadores que están construyendo su
+              perfil en INVICTO. Estamos apenas empezando, y queremos que hagas
+              parte del recorrido.
             </p>
 
-            {/* Store buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            {/* Access request CTA */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
               <motion.button
                 onClick={onCTAClick}
-                whileHover={{ scale: 1.04, boxShadow: "0 0 40px rgba(170,255,0,0.35)" }}
+                whileHover={{ scale: 1.04, boxShadow: "0 0 50px rgba(170,255,0,0.4)" }}
                 whileTap={{ scale: 0.96 }}
-                className="flex items-center gap-5 bg-on-background text-background px-7 py-4 rounded-2xl hover:bg-white transition-colors duration-200"
+                className="relative bg-neon text-background font-headline font-black italic text-lg px-10 py-5 skew-card overflow-hidden group"
               >
-                <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-                </svg>
-                <div className="text-left">
-                  <div className="text-[10px] opacity-50 uppercase font-mono tracking-widest">App Store</div>
-                  <div className="text-xl font-headline font-black italic">iOS</div>
-                </div>
+                <span className="skew-content flex items-center gap-3 relative z-10">
+                  SOLICITAR ACCESO
+                  <span className="material-symbols-outlined text-xl">arrow_forward</span>
+                </span>
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
               </motion.button>
 
-              <motion.button
-                onClick={onCTAClick}
-                whileHover={{ scale: 1.04, boxShadow: "0 0 40px rgba(170,255,0,0.35)" }}
-                whileTap={{ scale: 0.96 }}
-                className="flex items-center gap-5 bg-on-background text-background px-7 py-4 rounded-2xl hover:bg-white transition-colors duration-200"
-              >
-                <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M22.018 13.298l-3.919 2.218-3.515-3.493 3.543-3.521 3.891 2.202a1.49 1.49 0 0 1 0 2.594zM1.337.924a1.486 1.486 0 0 0-.112.568v21.017c0 .217.045.419.124.6l11.155-11.087L1.337.924zm11.207 10.065l2.249-2.234L3.513.133a1.499 1.499 0 0 0-.766-.207 1.49 1.49 0 0 0-.637.144l10.434 10.919zm0 2.474L2.11 23.477c.19.083.397.129.617.129.27 0 .53-.07.757-.205l10.991-6.22-3.031-3.018z" />
-                </svg>
-                <div className="text-left">
-                  <div className="text-[10px] opacity-50 uppercase font-mono tracking-widest">Google Play</div>
-                  <div className="text-xl font-headline font-black italic">ANDROID</div>
-                </div>
-              </motion.button>
+              <div className="flex items-center gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-neon animate-pulse" />
+                <span className="font-mono text-on-background/40 text-[10px] tracking-[0.25em] uppercase">
+                  Cupos limitados
+                </span>
+              </div>
             </div>
 
             <div className="mt-10 font-mono text-on-background/25 text-[10px] tracking-[0.25em] uppercase">
-              GRATIS · Sin tarjeta · Sin compromisos
+              Próximamente en iOS y Android · Gratis para empezar
             </div>
           </motion.div>
         </div>
