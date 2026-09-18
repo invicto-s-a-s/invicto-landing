@@ -85,7 +85,7 @@ export default function ConvocatoriasTable() {
         {loading ? "Cargando…" : `${total} ${total === 1 ? "convocatoria" : "convocatorias"}`}
       </p>
 
-      <div className="overflow-x-auto border border-[#222] rounded-xl">
+      <div className="overflow-x-auto admin-card border border-[#222] rounded-xl">
         <table className="w-full text-sm min-w-[760px]">
           <thead>
             <tr className="text-left font-mono text-[10px] tracking-[0.15em] uppercase text-on-surface-variant border-b border-[#222]">

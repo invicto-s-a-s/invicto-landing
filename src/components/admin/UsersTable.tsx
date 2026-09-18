@@ -63,7 +63,7 @@ export default function UsersTable() {
           value={q}
           onChange={(e) => { setQ(e.target.value); setPage(1); }}
           placeholder="Buscar por usuario, correo o nombre"
-          className="flex-1 min-w-[240px] bg-[#141414] border border-[#2A2A2A] rounded-lg px-4 py-2.5 text-sm outline-none focus:border-neon transition-colors"
+          className="flex-1 min-w-[240px] admin-card border border-[#2A2A2A] rounded-lg px-4 py-2.5 text-sm outline-none focus:border-neon transition-colors"
         />
         <div className="flex gap-2">
           {ROLES.map((r) => (
@@ -84,7 +84,7 @@ export default function UsersTable() {
         {loading ? "Cargando…" : `${total} ${total === 1 ? "cuenta" : "cuentas"}`}
       </p>
 
-      <div className="overflow-x-auto border border-[#222] rounded-xl">
+      <div className="overflow-x-auto admin-card border border-[#222] rounded-xl">
         <table className="w-full text-sm min-w-[720px]">
           <thead>
             <tr className="text-left font-mono text-[10px] tracking-[0.15em] uppercase text-on-surface-variant border-b border-[#222]">

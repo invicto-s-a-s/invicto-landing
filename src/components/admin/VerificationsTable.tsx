@@ -104,7 +104,7 @@ export default function VerificationsTable() {
         {rows.map((req) => {
           const key = `${req.kind}-${req.id}`;
           return (
-            <div key={key} className="bg-[#141414] border border-[#222] rounded-xl p-5">
+            <div key={key} className="admin-card border border-[#222] rounded-xl p-5">
               <div className="flex items-start justify-between gap-4 mb-3">
                 <div>
                   <p className="font-headline font-black italic text-lg leading-tight">

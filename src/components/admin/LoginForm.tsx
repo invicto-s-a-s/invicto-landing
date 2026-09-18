@@ -52,7 +52,7 @@ export default function LoginForm({ expired = false }: { expired?: boolean }) {
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="username"
           required
-          className="w-full bg-[#141414] border border-[#2A2A2A] rounded-lg px-4 py-3 mb-5 text-sm outline-none focus:border-neon transition-colors"
+          className="w-full admin-card border border-[#2A2A2A] rounded-lg px-4 py-3 mb-5 text-sm outline-none focus:border-neon transition-colors"
         />
 
         <label className="block font-mono text-[10px] tracking-[0.2em] uppercase text-on-surface-variant mb-2">
@@ -64,7 +64,7 @@ export default function LoginForm({ expired = false }: { expired?: boolean }) {
           onChange={(e) => setPassword(e.target.value)}
           autoComplete="current-password"
           required
-          className="w-full bg-[#141414] border border-[#2A2A2A] rounded-lg px-4 py-3 mb-6 text-sm outline-none focus:border-neon transition-colors"
+          className="w-full admin-card border border-[#2A2A2A] rounded-lg px-4 py-3 mb-6 text-sm outline-none focus:border-neon transition-colors"
         />
 
         {error && <p className="text-[#FF5A5A] text-sm mb-5">{error}</p>}

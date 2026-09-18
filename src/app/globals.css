@@ -237,3 +237,28 @@ article.legal-content .callout {
 article.legal-content .callout p:last-child {
   margin-bottom: 0;
 }
+
+/* ── Panel del equipo ─────────────────────────────────────────────────────
+   El panel usa el mismo fondo fijo de la landing (`body::before`), así que sus
+   superficies van translúcidas para dejarlo ver. El desenfoque no es adorno:
+   sin él, el texto pequeño de una tabla cae sobre una foto con zonas claras y
+   deja de leerse.
+
+   Las tarjetas con gráficos son CASI opacas a propósito. La paleta de las
+   series está validada contra `#141414`; sobre una foto con verdes brillantes
+   el contraste real bajaría y dejaría de cumplir. A 0.94 el color efectivo se
+   queda a un paso del validado.                                              */
+.admin-surface {
+  background-color: rgb(10 10 10 / 0.82);
+  backdrop-filter: blur(16px);
+}
+
+.admin-card {
+  background-color: rgb(20 20 20 / 0.88);
+  backdrop-filter: blur(10px);
+}
+
+.admin-card-solid {
+  background-color: rgb(20 20 20 / 0.94);
+  backdrop-filter: blur(10px);
+}

@@ -10,5 +10,13 @@ export const metadata: Metadata = {
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen bg-[#0D0D0D] text-on-background">{children}</div>;
+  return (
+    // Sin fondo propio: así se ve el `body::before` de la landing, que es el
+    // mismo fondo de marca. La legibilidad la ponen las superficies de cada
+    // tarjeta, no un panel opaco por encima.
+    <div className="min-h-screen text-on-background">
+      <div className="grain-overlay" />
+      {children}
+    </div>
+  );
 }
