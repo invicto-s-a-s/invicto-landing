@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import UserDetail from "./UserDetail";
 
 interface AdminUser {
   id: number;
@@ -28,6 +29,45 @@ const ROLES = [
 const date = (iso: string) =>
   new Date(iso).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" });
 
+const COLUMNS: { key: keyof AdminUser; label: string }[] = [
+  { key: "id", label: "ID" },
+  { key: "username", label: "Usuario" },
+  { key: "name", label: "Nombre" },
+  { key: "last_name", label: "Apellido" },
+  { key: "email", label: "Correo" },
+  { key: "role", label: "Tipo" },
+  { key: "verified", label: "Verificada" },
+  { key: "premium", label: "Premium" },
+  { key: "city", label: "Ciudad" },
+  { key: "country", label: "Pais" },
+  { key: "followers_count", label: "Seguidores" },
+  { key: "posts_count", label: "Publicaciones" },
+  { key: "created_at", label: "Alta" },
+];
+
+/**
+ * Las comillas se escapan doblandolas, que es lo que entiende una hoja de
+ * calculo. Sin esto, un nombre con una coma —o una biografia con un salto de
+ * linea— parte la fila y el resto de columnas se corre.
+ */
+const cell = (v: unknown) => {
+  if (v === null || v === undefined) return "";
+  if (typeof v === "boolean") return v ? "si" : "no";
+  const text = String(v);
+  return /[",\n;]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+};
+
+/**
+ * El BOM del principio es para Excel: sin el abre el archivo en la codificacion
+ * del sistema y cualquier tilde sale rota. El separador es `;` por lo mismo —
+ * en un Excel en espanol, la coma no separa columnas.
+ */
+function toCsv(rows: AdminUser[]): string {
+  const head = COLUMNS.map((c) => c.label).join(";");
+  const body = rows.map((r) => COLUMNS.map((c) => cell(r[c.key])).join(";"));
+  return `﻿${[head, ...body].join("\r\n")}`;
+}
+
 export default function UsersTable() {
   const [q, setQ] = useState("");
   const [role, setRole] = useState("");
@@ -35,6 +75,32 @@ export default function UsersTable() {
   const [rows, setRows] = useState<AdminUser[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [openUser, setOpenUser] = useState<number | null>(null);
+  const [exporting, setExporting] = useState(false);
+
+  /**
+   * Se pide la tabla entera al servidor y no las veinte filas que se ven: quien
+   * baja un CSV lo quiere para mirarlo todo en una hoja de calculo, y bajar una
+   * pagina suelta obligaria a repetirlo por cada pagina.
+   */
+  const exportCsv = async () => {
+    setExporting(true);
+    try {
+      const body = await fetch("/api/admin/admin/users/export").then((r) => r.json());
+      const items: AdminUser[] = body.data?.items ?? [];
+      if (items.length === 0) return;
+
+      const blob = new Blob([toCsv(items)], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `invicto-usuarios-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   // Se espera a que deje de escribir: sin esto sale una consulta por tecla.
   useEffect(() => {
@@ -78,6 +144,14 @@ export default function UsersTable() {
             </button>
           ))}
         </div>
+        <button
+          onClick={exportCsv}
+          disabled={exporting}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs bg-[#1A1A1A] text-on-surface-variant hover:text-[#EDEDED] transition-colors disabled:opacity-40"
+        >
+          <span className="material-symbols-outlined text-[16px]">download</span>
+          {exporting ? "Preparando…" : "Exportar CSV"}
+        </button>
       </div>
 
       <p className="text-xs text-on-surface-variant mb-3">
@@ -98,7 +172,11 @@ export default function UsersTable() {
           </thead>
           <tbody>
             {rows.map((u) => (
-              <tr key={u.id} className="border-b border-[#1A1A1A] last:border-0">
+              <tr
+                key={u.id}
+                onClick={() => setOpenUser(u.id)}
+                className="border-b border-[#1A1A1A] last:border-0 cursor-pointer hover:bg-white/[0.03] transition-colors"
+              >
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
                     <span>{[u.name, u.last_name].filter(Boolean).join(" ") || u.username}</span>
@@ -149,6 +227,10 @@ export default function UsersTable() {
             Siguiente
           </button>
         </div>
+      )}
+
+      {openUser !== null && (
+        <UserDetail userId={openUser} onClose={() => setOpenUser(null)} />
       )}
     </div>
   );

@@ -6,6 +6,9 @@ import Dashboard, { type AdminStats } from "./Dashboard";
 import UsersTable from "./UsersTable";
 import ConvocatoriasTable from "./ConvocatoriasTable";
 import VerificationsTable from "./VerificationsTable";
+import Insights from "./Insights";
+import Leaders from "./Leaders";
+import UserDetail from "./UserDetail";
 
 interface Me {
   id: number;
@@ -15,6 +18,8 @@ interface Me {
 
 const TABS = [
   { value: "resumen", label: "Resumen", icon: "dashboard" },
+  { value: "actividad", label: "Actividad", icon: "monitoring" },
+  { value: "lideres", label: "Líderes", icon: "emoji_events" },
   { value: "usuarios", label: "Usuarios", icon: "group" },
   { value: "verificaciones", label: "Verificaciones", icon: "verified_user" },
   { value: "convocatorias", label: "Convocatorias", icon: "campaign" },
@@ -28,6 +33,9 @@ export default function AdminPanel({ me }: { me: Me }) {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [failed, setFailed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // Desde una tabla de líderes también se abre la ficha: el panel vive aquí
+  // porque esa pestaña no tiene una lista propia detrás a la que volver.
+  const [openUser, setOpenUser] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/admin/admin/stats")
@@ -138,11 +146,17 @@ export default function AdminPanel({ me }: { me: Me }) {
               <p className="text-sm text-on-surface-variant">Cargando los números…</p>
             )
           )}
+          {tab === "actividad" && <Insights />}
+          {tab === "lideres" && <Leaders onOpenUser={setOpenUser} />}
           {tab === "usuarios" && <UsersTable />}
           {tab === "verificaciones" && <VerificationsTable />}
           {tab === "convocatorias" && <ConvocatoriasTable />}
         </div>
       </main>
+
+      {openUser !== null && (
+        <UserDetail userId={openUser} onClose={() => setOpenUser(null)} />
+      )}
     </div>
   );
 }
