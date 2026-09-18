@@ -183,10 +183,71 @@ Use `whileInView` + `viewport={{ once: true }}` for performance on long pages.
 - Framer Motion for animation state
 - No Redux or Context API needed (keep it simple)
 
+## Panel del equipo (`admin.invictoapp.com`)
+
+Este repo ya no es solo la landing: sirve también el panel interno, en **su
+propio origen**. `src/middleware.ts` enruta por host — `admin.*` reescribe `/` a
+`/admin` y manda cualquier otra ruta al dominio principal, con `X-Robots-Tag`
+para que el panel no se indexe.
+
+**Origen aparte y no una ruta más** porque una cookie de sesión de revisor en
+`invictoapp.com` la vería cualquier script de la landing. Separando el origen, no
+se tocan.
+
+```
+src/app/admin/                    ← la página (login o panel, según la cookie)
+src/app/api/admin/login/          ← POST /auth + GET /admin/me; la cookie httpOnly
+                                     solo se pone si /admin/me responde
+src/app/api/admin/[...path]/      ← proxy a la API. ALLOWED = ["admin", "verification"]
+src/lib/admin-api.ts              ← TOKEN_COOKIE, getToken(), apiFetch()
+src/components/admin/             ← AdminPanel, Dashboard, Insights, Leaders,
+                                     UsersTable, UserDetail, Verifications…
+src/components/admin/viz/         ← AreaChart, RoleBars, FunnelBars, palette
+```
+
+- **El proxy lleva lista blanca.** Sin ella sería un proxy abierto a todo el
+  backend con las credenciales de un revisor: cualquiera con la sesión abierta
+  llamaría a lo que quisiera desde la consola del navegador
+- **El login es el mismo `POST /auth` de la app.** Lo que distingue a quien pasa
+  es `GET /admin/me`, y la cookie no se escribe si eso falla
+- **El panel es de solo lectura**, salvo abrir o cerrar una convocatoria y
+  aprobar o rechazar una verificación
+
+### Colores de los gráficos
+
+`viz/palette.ts`. **No son los de la landing**: el lima de marca (`#AAFF00`)
+tiene una luminosidad de 0.91, muy por encima de la banda 0.48–0.67 en la que
+los colores de una serie se distinguen entre sí. Sirve para un botón; para una
+leyenda de tres categorías, no.
+
+- `SERIES` (lima apagado, azul, naranja) pasa las seis comprobaciones sobre el
+  fondo `#141414`: banda de luminosidad, croma mínimo, separación para
+  daltonismo, separación en visión normal y contraste ≥ 3:1
+- `SOLO` es el lima puro, **solo para series solitarias**: ahí no hay nada de lo
+  que distinguirlo y lo único que importa es el contraste
+- Nunca dos ejes verticales en un gráfico. Dos magnitudes distintas son dos
+  gráficos
+- El orden de las categorías es fijo por entidad, nunca por tamaño: si cambia el
+  ranking, el color no
+
+### Superficies sobre el fondo de marca
+
+`globals.css` define `.admin-surface`, `.admin-card` y `.admin-card-solid`
+(opacidad creciente + `backdrop-filter`). El fondo de la landing asoma entre los
+bloques, pero tiene zonas de verde brillante: **los títulos de sección van
+DENTRO de la tarjeta**, no sueltos encima, porque un texto gris de 10px cayendo
+justo ahí deja de leerse.
+
 ## Metadata & SEO
-- **Title**: "INVICTO | Democratizando el Fútbol Profesional"
-- **Description**: "La plataforma de social scouting que conecta el talento con las oportunidades reales mediante tecnología de élite."
-- Set in `layout.tsx` via Next.js Metadata API
+- `src/lib/site.ts` — `SITE_URL`, `SITE_NAME`, `SITE_DESCRIPTION`, en un solo sitio
+- `layout.tsx` — `metadataBase`, plantilla de título (`%s · Invicto`), canónica,
+  Open Graph con `public/og-invicto.jpg` (1200×630 **de verdad**: declararlo y
+  servir otra proporción hace que el recorte lo decida cada red), JSON-LD
+  `@graph` (Organization / WebSite / MobileApplication) y `verification.google`
+  por variable de entorno
+- `src/app/sitemap.ts` y `src/app/robots.ts` — nativos de Next, no archivos sueltos
+- Search Console está verificado por **registro TXT de DNS**: la propiedad de
+  dominio no admite la etiqueta HTML
 
 ## Deployment
 - Deployed on **Vercel** (production environment)
@@ -208,7 +269,7 @@ Use `whileInView` + `viewport={{ once: true }}` for performance on long pages.
 ## Known Limitations & TODOs
 - Phone mockup uses external Google Photos URL (consider hosting locally)
 - Modal state is local; in future could integrate with app store links
-- No dynamic content yet (all hardcoded copy)
+- La landing sigue siendo copy fijo; lo dinámico es el panel
 - Analytics not implemented
 
 ## Future Enhancements
