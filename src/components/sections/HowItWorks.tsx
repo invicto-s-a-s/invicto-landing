@@ -2,24 +2,33 @@
 
 import { motion } from "framer-motion";
 
+/**
+ * Los tres pasos son los tres que da un jugador de verdad, en orden.
+ *
+ * El paso 02 decía que "nuestro sistema analiza tu rendimiento y genera un
+ * rating objetivo": no existe tal análisis. Quien evalúa es una persona —un
+ * ojeador verificado, 22 atributos, uno por uno— y las estadísticas del
+ * partido las escribe el propio jugador. Decirlo así no debilita el paso: un
+ * club sabe leer un informe de ojeador y no sabe qué es un algoritmo nuestro.
+ */
 const STEPS = [
   {
     num: "01",
     icon: "person_add",
     title: "CREA TU PERFIL",
-    desc: "Registra tus datos, sube videos de tus mejores jugadas y conecta tus estadísticas reales al instante.",
+    desc: "Tus datos, tu posición, tus jugadas y las estadísticas de cada partido, en un perfil que se puede enseñar.",
   },
   {
     num: "02",
     icon: "analytics",
-    title: "DEMUESTRA TU NIVEL",
-    desc: "Nuestro sistema analiza tu rendimiento y genera un rating objetivo basado en datos verificados.",
+    title: "QUE TE EVALÚEN",
+    desc: "Un ojeador verificado te puntúa en 22 atributos —técnicos, físicos, tácticos y mentales— y tu perfil enseña el radar de tu posición.",
   },
   {
     num: "03",
     icon: "hub",
     title: "CONECTA CON CLUBES",
-    desc: "Scouts de todo el mundo descubren tu talento y te contactan directamente en la plataforma.",
+    desc: "Ojeadores y clubes te buscan por posición, zona y nivel; si les encajas, te escriben o te proponen una cita.",
   },
 ];
 

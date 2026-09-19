@@ -5,22 +5,34 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type Tab = "jugadores" | "scouts";
 
+/**
+ * Las dos listas van ordenadas de más a menos decisivo, no por temas.
+ *
+ * La primera tarjeta de cada pestaña es la razón por la que alguien se queda:
+ * al jugador le importa que alguien con criterio lo mire; al ojeador, poder
+ * llegar a quien busca. Lo demás sostiene esa promesa.
+ *
+ * **Todo lo de aquí existe en la app.** Se cayeron cuatro tarjetas que no:
+ * «scouts de más de 120 países», «métricas biométricas» (son la estatura y el
+ * peso del registro), «rating objetivo» y «algoritmos sin sesgos humanos» —
+ * quien evalúa es una persona, y esa es precisamente la parte buena—.
+ */
 const FEATURES: Record<Tab, { icon: string; title: string; desc: string }[]> = {
   jugadores: [
-    { icon: "verified", title: "Perfil profesional verificado", desc: "Un perfil auténtico que muestra tu talento real sin filtros ni sesgos." },
-    { icon: "videocam", title: "Videos de tus mejores jugadas", desc: "Sube y organiza tus clips más impactantes para que los scouts te vean en acción." },
-    { icon: "star", title: "Sistema de rating objetivo", desc: "Un score calculado sobre datos reales que habla por ti mejor que cualquier recomendación." },
-    { icon: "trending_up", title: "Historial de evolución", desc: "Registra tu progreso y muestra a los clubes tu trayectoria de mejora constante." },
-    { icon: "public", title: "Visibilidad global", desc: "Tu perfil accesible para scouts de más de 120 países las 24 horas del día." },
-    { icon: "fitness_center", title: "Análisis de rendimiento", desc: "Métricas biométricas y físicas integradas para un perfil deportivo completo." },
+    { icon: "verified", title: "Te evalúa un ojeador verificado", desc: "22 atributos técnicos, físicos, tácticos y mentales, puntuados uno a uno por alguien que se identificó con sus documentos ante nosotros." },
+    { icon: "radar", title: "El radar de tu posición", desc: "A un portero no se le mide el regate. Cada posición se evalúa con los atributos que le tocan y se dibuja en su propio gráfico." },
+    { icon: "videocam", title: "Tus jugadas, no un video suelto", desc: "Clips y fotos ordenados en un perfil que un ojeador puede recorrer entero, con las estadísticas de cada partido al lado." },
+    { icon: "trending_up", title: "Tu trayectoria, club por club", desc: "Por dónde has pasado, cuántos partidos, goles y asistencias. Lo que hasta hoy cabía en una frase suelta." },
+    { icon: "visibility", title: "Sabes que te están mirando", desc: "Cuánta gente entró a tu perfil y cuándo. Deja de ser una sensación y pasa a ser un número." },
+    { icon: "shield", title: "Quien te escribe da la cara", desc: "Si eres menor de edad, solo puede escribirte una cuenta cuyos documentos hemos revisado. Y para proponerte una cita hay que estar verificado, tengas la edad que tengas." },
   ],
   scouts: [
-    { icon: "manage_search", title: "Base de talentos en crecimiento", desc: "Una comunidad de jugadores jóvenes en Colombia con perfiles verificados y actualizados." },
-    { icon: "filter_list", title: "Filtros avanzados", desc: "Busca por posición, edad, país, rating, historial y mucho más con precisión quirúrgica." },
-    { icon: "verified_user", title: "Ratings imparciales", desc: "Scores generados por algoritmos objetivos, sin sesgos humanos ni manipulación posible." },
-    { icon: "chat", title: "Contacto directo y seguro", desc: "Comunícate con jugadores directamente en la plataforma con privacidad garantizada." },
-    { icon: "download", title: "Informes exportables", desc: "Genera reportes detallados de cada jugador para compartir con tu equipo técnico." },
-    { icon: "notifications", title: "Alertas de nuevos talentos", desc: "Recibe notificaciones cuando aparece un jugador que cumple tus criterios exactos." },
+    { icon: "filter_list", title: "Filtra hasta dar con el perfil", desc: "Posición, zona, pierna dominante, valoración y si está libre o con equipo. Y el feed te acerca a quien juega cerca de ti." },
+    { icon: "notifications", title: "Te avisamos cuando aparece", desc: "Guarda la búsqueda y recibe un aviso el día que alguien empieza a encajar, aunque se registrara meses atrás." },
+    { icon: "manage_search", title: "Tu control de captación", desc: "A quién observas, qué reportes llevas, qué partidos has visto y comparativas entre dos jugadores. Privado: nadie ve a quién estás siguiendo." },
+    { icon: "download", title: "Informes exportables", desc: "Saca el informe de un jugador y compártelo con tu cuerpo técnico fuera de la app." },
+    { icon: "event", title: "Propón una cita", desc: "Fecha, hora y lugar; el jugador acepta o no. Una propuesta viva por jugador, para que nadie reciba veinte." },
+    { icon: "workspace_premium", title: "Tu trabajo queda a la vista", desc: "Cuántos jugadores has evaluado y cuántos partidos has visto, más tu experiencia y tus logros. El número se publica; a quién observas, no." },
   ],
 };
 

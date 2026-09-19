@@ -183,13 +183,22 @@ export default function Hero({ onCTAClick }: HeroProps) {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 transition={{ delay: 1.4, duration: 0.55, ease: [0.33, 1, 0.68, 1] }}
               >
+                {/* De 1 a 5, como en la app. Antes marcaba "94" y enseñaba una
+                    escala que no existe en ninguna pantalla del producto. */}
                 <div className="font-mono text-on-background/35 text-[9px] uppercase tracking-widest mb-1">
-                  Rating global
+                  Valoración
                 </div>
-                <div className="font-headline font-black italic text-3xl text-neon leading-none">94</div>
+                <div className="font-headline font-black italic text-3xl text-neon leading-none">
+                  4,4<span className="text-on-background/25 text-base not-italic">/5</span>
+                </div>
                 <div className="flex gap-0.5 mt-1.5">
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <span key={i} className="text-neon text-sm">★</span>
+                    <span
+                      key={i}
+                      className={i <= 4 ? "text-neon text-sm" : "text-on-background/15 text-sm"}
+                    >
+                      ★
+                    </span>
                   ))}
                 </div>
               </motion.div>
@@ -201,15 +210,20 @@ export default function Hero({ onCTAClick }: HeroProps) {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 transition={{ delay: 1.7, duration: 0.55, ease: [0.33, 1, 0.68, 1] }}
               >
+                {/* "En vivo" con un punto parpadeando se lee como un contador
+                    real de altas, y no hay tal cosa. La tarjeta enseña lo que
+                    el ojeador ve de verdad: quién le encaja y de dónde es. */}
                 <div className="font-mono text-on-background/35 text-[9px] uppercase tracking-widest mb-1">
-                  Nuevo perfil
+                  Encaja con tu búsqueda
                 </div>
                 <div className="font-headline font-black italic text-sm text-on-background leading-tight">
-                  Medellín, Colombia
+                  Extremo izquierdo
                 </div>
                 <div className="flex items-center gap-1.5 mt-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-neon animate-pulse" />
-                  <span className="text-neon text-[10px] font-mono">En vivo</span>
+                  <span className="material-symbols-outlined text-neon text-[13px]">
+                    location_on
+                  </span>
+                  <span className="text-neon text-[10px] font-mono">A 12 km</span>
                 </div>
               </motion.div>
             </div>

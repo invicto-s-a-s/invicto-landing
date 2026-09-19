@@ -2,18 +2,28 @@
 
 import { motion } from "framer-motion";
 
+/**
+ * Las dos columnas van emparejadas: cada línea de AFTER responde a la de
+ * BEFORE que tiene enfrente. Si se toca una, se toca su pareja.
+ *
+ * Y cada línea de AFTER es algo que la app hace hoy, no una meta. Prometer
+ * "miles de scouts" o "cualquier club del planeta" —como decía antes— se
+ * desmonta en cuanto alguien abre la app y, en Colombia, es publicidad
+ * regulada. Lo que sí tenemos es más creíble: a un jugador le importa que
+ * alguien con criterio lo mire, no el tamaño del catálogo.
+ */
 const BEFORE = [
   "Mandas videos que nadie ve",
-  "Sin métricas objetivas de tu nivel",
+  "Nadie con criterio ha valorado tu nivel",
   "Dependes de contactos o de la suerte",
-  "Tu talento es invisible para el mundo",
+  "No sabes si alguien te está mirando",
 ];
 
 const AFTER = [
-  "Tu perfil llega a miles de scouts globales",
-  "Ratings verificados e imposibles de manipular",
-  "Oportunidades que encuentran tu talento",
-  "Visible para cualquier club del planeta",
+  "Tus jugadas viven en un perfil, no en un chat",
+  "Un ojeador verificado te evalúa en 22 atributos",
+  "Los ojeadores te filtran por posición, zona y nivel",
+  "Ves cuánta gente entra a mirar tu perfil",
 ];
 
 export default function Problem() {
