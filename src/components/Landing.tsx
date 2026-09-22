@@ -13,6 +13,7 @@ import Ecosystem from "@/components/sections/Ecosystem";
 import DownloadCTA from "@/components/sections/DownloadCTA";
 import Footer from "@/components/Footer";
 import AccessRequestModal from "@/components/AccessRequestModal";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 export default function Landing() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -38,6 +39,8 @@ export default function Landing() {
       </main>
 
       <Footer onCTAClick={open} />
+
+      <WhatsAppButton />
 
       <AccessRequestModal isOpen={modalOpen} onClose={close} />
     </>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-type Tab = "jugadores" | "scouts";
+type Tab = "jugadores" | "scouts" | "clubes";
 
 /**
  * Las dos listas van ordenadas de más a menos decisivo, no por temas.
@@ -33,6 +33,14 @@ const FEATURES: Record<Tab, { icon: string; title: string; desc: string }[]> = {
     { icon: "download", title: "Informes exportables", desc: "Saca el informe de un jugador y compártelo con tu cuerpo técnico fuera de la app." },
     { icon: "event", title: "Propón una cita", desc: "Fecha, hora y lugar; el jugador acepta o no. Una propuesta viva por jugador, para que nadie reciba veinte." },
     { icon: "workspace_premium", title: "Tu trabajo queda a la vista", desc: "Cuántos jugadores has evaluado y cuántos partidos has visto, más tu experiencia y tus logros. El número se publica; a quién observas, no." },
+  ],
+  clubes: [
+    { icon: "campaign", title: "Abre una convocatoria", desc: "Encuentra jugadores que realmente encajan con tu proyecto deportivo. Publica pruebas, visorías o convocatorias indicando el perfil que necesitas; los jugadores reciben la oportunidad desde la plataforma y se postulan en pocos clics." },
+    { icon: "filter_list", title: "Encuentra el talento ideal", desc: "Miles de perfiles, menos tiempo buscando y más tiempo formando. Filtra jugadores por posición, edad, ubicación, perfil deportivo y otros criterios relevantes para dar con el talento que tu equipo necesita." },
+    { icon: "groups", title: "Tu cantera en un solo lugar", desc: "Organiza y sigue la evolución de tus jugadores desde una sola plataforma. Mantén centralizada la información deportiva de tu institución y consulta el desarrollo de cada jugador a medida que avanza en su proceso." },
+    { icon: "verified", title: "Perfil oficial verificado", desc: "Genera confianza desde el primer contacto. Muestra la identidad oficial de tu club o academia para que los jugadores sepan que interactúan con una organización deportiva real y verificada." },
+    { icon: "travel_explore", title: "Descubre nuevos talentos", desc: "Accede a jugadores que buscan una oportunidad para demostrar su potencial. Explora perfiles deportivos, visualiza información relevante y descubre futbolistas que pueden aportar valor a tu equipo." },
+    { icon: "event_available", title: "Coordina pruebas y contactos", desc: "Conecta directamente con los jugadores que te interesan. Invítalos a procesos de observación, pruebas o acercamientos deportivos y gestiona el contacto desde un mismo lugar." },
   ],
 };
 
@@ -71,13 +79,13 @@ export default function Features() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
           viewport={{ once: true }}
-          className="flex gap-0 mb-14 border border-white/10 p-1 w-fit"
+          className="flex flex-wrap gap-0 mb-14 border border-white/10 p-1 w-fit"
         >
-          {(["jugadores", "scouts"] as Tab[]).map((tab) => (
+          {(["jugadores", "scouts", "clubes"] as Tab[]).map((tab) => (
             <button
               key={tab}
               onClick={() => setActive(tab)}
-              className="relative px-8 py-3 font-headline font-black italic uppercase text-sm transition-colors duration-300 z-10"
+              className="relative px-5 sm:px-8 py-3 font-headline font-black italic uppercase text-xs sm:text-sm transition-colors duration-300 z-10"
             >
               {active === tab && (
                 <motion.div
@@ -91,7 +99,11 @@ export default function Features() {
                   active === tab ? "text-background" : "text-on-background/40"
                 }`}
               >
-                {tab === "jugadores" ? "JUGADORES" : "SCOUTS"}
+                {tab === "jugadores"
+                  ? "JUGADORES"
+                  : tab === "scouts"
+                    ? "SCOUTS"
+                    : "CLUBES / ACADEMIAS"}
               </span>
             </button>
           ))}
