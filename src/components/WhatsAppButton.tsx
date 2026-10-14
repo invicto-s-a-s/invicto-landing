@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 
 // Colombia (+57). Número de contacto de INVICTO.
-const WHATSAPP_NUMBER = "573006124077";
+const WHATSAPP_NUMBER = "573122646778";
 const PREFILL = "Hola, quiero más información sobre INVICTO";
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(PREFILL)}`;
 
