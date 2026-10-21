@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://api.invictoapp.com";
-
 type Resultado = "approved" | "rejected";
 
 interface Props {
@@ -28,7 +26,10 @@ export default function AuthorizeActions({ token, minorName }: Props) {
     setEnviando(cual);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/guardian/requests/${token}/respond`, {
+      // Por el servidor de la landing, NO directo a la API: un POST con
+      // JSON dispara un preflight y la API no tiene CORS en ninguna ruta.
+      // Directo, el navegador lo bloquea y al tutor le sale «Failed to fetch».
+      const res = await fetch(`/api/guardian/${encodeURIComponent(token)}/respond`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ accept }),
