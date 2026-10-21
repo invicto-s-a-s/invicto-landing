@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/sections/Hero";
+import VideoShowcase from "@/components/sections/VideoShowcase";
 import Problem from "@/components/sections/Problem";
 import HowItWorks from "@/components/sections/HowItWorks";
 import WhyInvicto from "@/components/sections/WhyInvicto";
@@ -29,6 +30,7 @@ export default function Landing() {
 
       <main>
         <Hero onCTAClick={open} />
+        <VideoShowcase />
         <Problem />
         <HowItWorks />
         <WhyInvicto />
