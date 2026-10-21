@@ -238,6 +238,45 @@ article.legal-content .callout p:last-child {
   margin-bottom: 0;
 }
 
+/* Las tablas de los anexos (planes, precios, parámetros).
+
+   El envoltorio lleva el scroll horizontal, no la tabla: cuatro columnas de
+   precios no caben en un teléfono y sin esto ensanchan la página entera. */
+article.legal-content .legal-table-wrap {
+  margin: 1.5rem 0 2rem;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+}
+
+article.legal-content table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+article.legal-content thead th {
+  background: rgba(170, 255, 0, 0.07);
+  color: #FFFFFF;
+  font-weight: 700;
+  text-align: left;
+  padding: 0.7rem 0.85rem;
+  white-space: nowrap;
+}
+
+article.legal-content tbody td {
+  padding: 0.7rem 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  vertical-align: top;
+}
+
+article.legal-content tbody td:first-child {
+  color: #F0F0F0;
+  font-weight: 600;
+}
+
 /* ── Panel del equipo ─────────────────────────────────────────────────────
    El panel usa el mismo fondo fijo de la landing (`body::before`), así que sus
    superficies van translúcidas para dejarlo ver. El desenfoque no es adorno:
