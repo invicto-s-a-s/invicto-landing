@@ -84,13 +84,26 @@ export default function AuthorizeActions({ token, minorName }: Props) {
         <p style={{ color: "#FF6B6B", fontSize: 14, marginTop: 14 }}>{error}</p>
       )}
 
-      <p style={{ color: "#777", fontSize: 13, marginTop: 20, lineHeight: 1.6 }}>
+      <p style={{ color: GRIS_PIE, fontSize: 13, marginTop: 20, lineHeight: 1.6 }}>
         Si no haces nada, el contacto queda bloqueado. No hace falta que
         respondas para proteger a {minorName}.
       </p>
     </div>
   );
 }
+
+/**
+ * El gris del texto de pie.
+ *
+ * **#999 y no #777, y es una medicion.** Sobre el velo del marco —rgb(8 8 8 /
+ * 0.86) encima de la foto del heroe— el peor fondo posible es rgb(43,43,43), y
+ * ahi #777 da **3,16:1**: por debajo del 4,5:1 que pide AA para texto normal.
+ * #999 da 4,97:1.
+ *
+ * No es un detalle de estilo: ese pie dice «no hace falta que respondas», que
+ * es informacion que un padre necesita para no sentirse obligado a algo.
+ */
+const GRIS_PIE = "#999999";
 
 const NEON = "#AAFF00";
 

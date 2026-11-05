@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MarcoDeEnlace } from "@/components/MarcoDeEnlace";
 import AuthorizeActions from "./AuthorizeActions";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://api.invictoapp.com";
@@ -63,13 +64,13 @@ export default async function AutorizarPage({ params }: Props) {
 
   if (!peticion) {
     return (
-      <Marco>
+      <MarcoDeEnlace>
         <h1 style={titulo}>Este enlace ya no sirve</h1>
         <p style={parrafo}>
           Puede que haya caducado o que ya se haya respondido. Si crees que es un
           error, pídele a tu hijo o hija que vuelva a intentarlo desde la app.
         </p>
-      </Marco>
+      </MarcoDeEnlace>
     );
   }
 
@@ -81,7 +82,7 @@ export default async function AutorizarPage({ params }: Props) {
   const yaRespondida = peticion.status !== "pending";
 
   return (
-    <Marco>
+    <MarcoDeEnlace>
       <p style={{ ...parrafo, marginTop: 0, color: "#AAAAAA" }}>Invicto</p>
       <h1 style={titulo}>¿Autorizas que le escriban a {menor}?</h1>
 
@@ -119,15 +120,7 @@ export default async function AutorizarPage({ params }: Props) {
       ) : (
         <AuthorizeActions token={token} minorName={menor} />
       )}
-    </Marco>
-  );
-}
-
-function Marco({ children }: { children: React.ReactNode }) {
-  return (
-    <main style={{ minHeight: "100dvh", padding: "48px 20px", display: "flex", justifyContent: "center" }}>
-      <div style={{ width: "100%", maxWidth: 560 }}>{children}</div>
-    </main>
+    </MarcoDeEnlace>
   );
 }
 
