@@ -23,6 +23,20 @@ import type { ReactNode } from "react";
  * **Lo usan las dos.** Tenían un `Marco` cada una, idéntico, y el defecto
  * también era el mismo; arreglar solo el nuevo habría dejado al tutor de un
  * menor leyendo un mensaje privado sobre una foto.
+ *
+ * ## Dos cosas que solo se vieron abriéndolo en un teléfono de verdad
+ *
+ * 1. **La tarjeta se estiraba hasta el alto de la pantalla.** El `<main>` lleva
+ *    `minHeight: 100dvh` y es un contenedor flex, así que el `align-items:
+ *    stretch` que viene por defecto le daba a la tarjeta todo ese alto. Con el
+ *    contenido largo —el consentimiento entero— no se notaba; con el mensaje
+ *    de «este enlace ya no sirve», que son dos líneas, quedaban ~1.100 px de
+ *    negro vacío debajo y la página se leía como rota.
+ *
+ * 2. **No había ni una marca.** Quien abre esto llega desde un correo, **no
+ *    tiene cuenta en Invicto y puede no saber qué es**: un recuadro negro sin
+ *    logo es lo que se cierra o se marca como spam. El logo va fuera de la
+ *    tarjeta y arriba, que es donde se busca de quién viene algo.
  */
 export function MarcoDeEnlace({ children }: { children: ReactNode }) {
   return (
@@ -31,9 +45,19 @@ export function MarcoDeEnlace({ children }: { children: ReactNode }) {
         minHeight: "100dvh",
         padding: "28px 16px 48px",
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "column",
+        alignItems: "center",
+        // Sin esto la tarjeta se estira hasta el alto del viewport. Ver arriba.
+        justifyContent: "flex-start",
+        gap: 20,
       }}
     >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo.png"
+        alt="Invicto"
+        style={{ height: 30, width: "auto", opacity: 0.95 }}
+      />
       <div
         style={{
           width: "100%",
