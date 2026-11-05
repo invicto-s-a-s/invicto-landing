@@ -9,9 +9,10 @@ import { SITE_URL } from "@/lib/site";
  * explicar más adelante por qué el rastreador la sigue. `/p/` son enlaces de
  * compartir de un solo uso.
  *
- * `/autorizar/` y `/ausencia/` llevan **el nombre de un menor**, y su URL ES la
- * credencial del tutor: la primera trae además un mensaje privado y la segunda,
- * dónde y a qué hora entrena ese chico. Las dos páginas salen con `noindex`,
+ * `/autorizar/`, `/ausencia/` y `/acudiente/` llevan **el nombre de un menor**, y
+ * su URL ES la credencial del tutor: la primera trae además un mensaje privado,
+ * la segunda dónde y a qué hora entrena ese chico, y la tercera a qué club. Las
+ * tres páginas salen con `noindex`,
  * pero eso solo pide que no se publiquen: esto pide que ni se visiten, que es
  * lo que de verdad hace falta cuando el secreto está en la propia dirección.
  *
@@ -23,7 +24,10 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin", "/api/", "/p/", "/autorizar/", "/ausencia/"],
+      disallow: [
+        "/admin", "/api/", "/p/",
+        "/autorizar/", "/ausencia/", "/acudiente/",
+      ],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,
