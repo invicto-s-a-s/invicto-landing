@@ -9,6 +9,7 @@ import VerificationsTable from "./VerificationsTable";
 import Insights from "./Insights";
 import Leaders from "./Leaders";
 import UserDetail from "./UserDetail";
+import PlansPanel from "./PlansPanel";
 
 interface Me {
   id: number;
@@ -23,6 +24,7 @@ const TABS = [
   { value: "usuarios", label: "Usuarios", icon: "group" },
   { value: "verificaciones", label: "Verificaciones", icon: "verified_user" },
   { value: "convocatorias", label: "Convocatorias", icon: "campaign" },
+  { value: "planes", label: "Planes", icon: "sell" },
 ] as const;
 
 type Tab = (typeof TABS)[number]["value"];
@@ -151,6 +153,7 @@ export default function AdminPanel({ me }: { me: Me }) {
           {tab === "usuarios" && <UsersTable />}
           {tab === "verificaciones" && <VerificationsTable />}
           {tab === "convocatorias" && <ConvocatoriasTable />}
+          {tab === "planes" && <PlansPanel />}
         </div>
       </main>
 
