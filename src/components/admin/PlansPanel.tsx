@@ -3,11 +3,13 @@
 import { useState } from "react";
 import PlanRequests from "./PlanRequests";
 import PlanCatalog from "./PlanCatalog";
+import PlanGates from "./PlanGates";
 
 const VISTAS = [
   { value: "solicitudes", label: "Solicitudes" },
   { value: "asignar", label: "Asignar a mano" },
   { value: "catalogo", label: "Catálogo" },
+  { value: "candados", label: "Candados" },
 ] as const;
 
 type Vista = (typeof VISTAS)[number]["value"];
@@ -96,8 +98,8 @@ function AsignarAMano() {
 }
 
 /**
- * Los planes en el panel: confirmar lo que la gente pide, dar uno a mano y
- * editar el catálogo.
+ * Los planes en el panel: confirmar lo que la gente pide, dar uno a mano,
+ * editar el catálogo y abrir o cerrar lo que depende del plan.
  *
  * Mientras no haya cobro por las tiendas, **esta pestaña es el cobro**: la app
  * deja la solicitud y aquí se confirma.
@@ -122,6 +124,7 @@ export default function PlansPanel() {
       {vista === "solicitudes" && <PlanRequests />}
       {vista === "asignar" && <AsignarAMano />}
       {vista === "catalogo" && <PlanCatalog />}
+      {vista === "candados" && <PlanGates />}
     </div>
   );
 }
