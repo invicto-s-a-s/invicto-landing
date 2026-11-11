@@ -70,10 +70,10 @@ export default async function AusenciaPage({ params }: Props) {
   if (!aviso) {
     return (
       <MarcoDeEnlace>
-        <h1 style={titulo}>Este enlace ya no sirve</h1>
+        <h1 style={titulo}>Este enlace ya no es válido</h1>
         <p style={parrafo}>
-          Puede que haya caducado — duran siete días. Si quieres contarle algo a
-          la escuela, comunícate directamente con ella.
+          Es posible que haya expirado, porque los enlaces son válidos durante siete
+          días. Si deseas informar algo a la escuela, comunícate directamente con ella.
         </p>
       </MarcoDeEnlace>
     );
@@ -120,7 +120,7 @@ export default async function AusenciaPage({ params }: Props) {
       <ReasonForm token={token} playerName={aviso.jugador} />
 
       <p style={{ ...parrafo, color: GRIS_PIE, fontSize: 13, marginTop: 28 }}>
-        Invicto solo transmite lo que registra la escuela: no sabemos dónde está{" "}
+        Invicto solo transmite lo que registra la escuela. No sabemos dónde está{" "}
         {aviso.jugador} ni somos responsables de su cuidado.
       </p>
     </MarcoDeEnlace>

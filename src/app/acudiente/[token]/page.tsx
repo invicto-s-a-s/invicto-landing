@@ -63,10 +63,10 @@ export default async function AcudientePage({ params }: Props) {
   if (!solicitud) {
     return (
       <MarcoDeEnlace>
-        <h1 style={titulo}>Este enlace ya no sirve</h1>
+        <h1 style={titulo}>Este enlace ya no es válido</h1>
         <p style={parrafo}>
-          Puede que haya caducado — duran catorce días. Si quieres autorizar,
-          pídele al club que te lo reenvíe.
+          Es posible que haya expirado, porque los enlaces son válidos durante catorce
+          días. Si deseas autorizar, solicita al club que te lo envíe nuevamente.
         </p>
       </MarcoDeEnlace>
     );
@@ -95,9 +95,9 @@ export default async function AcudientePage({ params }: Props) {
       </div>
 
       <p style={parrafo}>
-        Te escribimos a ti porque <strong>{jugador}</strong> es menor de edad y nos
-        dio tus datos. Con tu autorización, su perfil aparece en la plantilla
-        de {club} dentro de Invicto.
+        Nos comunicamos contigo porque <strong>{jugador}</strong> es menor de edad y te
+        registró como su acudiente. Con tu autorización, su perfil aparecerá en la
+        plantilla de {club} dentro de Invicto.
       </p>
 
       {respondido ? (
@@ -105,7 +105,7 @@ export default async function AcudientePage({ params }: Props) {
           <p style={{ margin: 0, color: "#AAAAAA", fontSize: 14, lineHeight: 1.6 }}>
             {respondido === "aprobado"
               ? `Ya autorizaste esta solicitud. ${jugador} está en la plantilla de ${club}.`
-              : "Ya respondiste que no a esta solicitud."}
+              : "Ya respondiste que no autorizas esta solicitud."}
           </p>
         </div>
       ) : (

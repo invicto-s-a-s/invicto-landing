@@ -60,11 +60,11 @@ export default function ReasonForm({ token, playerName }: Props) {
       });
       if (!res.ok) {
         const cuerpo = await res.json().catch(() => null);
-        throw new Error(cuerpo?.message ?? "No se pudo guardar tu respuesta.");
+        throw new Error(cuerpo?.message ?? "No pudimos guardar tu respuesta. Inténtalo nuevamente.");
       }
       setGuardado(true);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "No se pudo guardar tu respuesta.");
+      setError(e instanceof Error ? e.message : "No pudimos guardar tu respuesta. Inténtalo nuevamente.");
     } finally {
       setEnviando(false);
     }
@@ -76,14 +76,14 @@ export default function ReasonForm({ token, playerName }: Props) {
         <div style={{ ...caja, borderColor: NEON, marginBottom: 20 }}>
           <p style={{ margin: 0, fontWeight: 600, color: "#F0F0F0" }}>Gracias</p>
           <p style={{ margin: "8px 0 0", color: "#AAAAAA", fontSize: 14, lineHeight: 1.6 }}>
-            La escuela ya lo sabe. Si te equivocaste, puedes cambiarlo aquí mismo:
-            se guarda lo último que nos digas.
+            La escuela ya recibió tu respuesta. Si necesitas corregirla, puedes
+            cambiarla aquí mismo. Se conservará la última que envíes.
           </p>
         </div>
       )}
 
       <p style={{ color: "#AAAAAA", fontSize: 14, margin: "0 0 10px" }}>
-        ¿Por qué no fue?
+        ¿Cuál fue el motivo?
       </p>
       <div style={{ display: "flex", gap: 9, flexWrap: "wrap" }}>
         {MOTIVOS.map((m) => (
@@ -106,7 +106,7 @@ export default function ReasonForm({ token, playerName }: Props) {
         htmlFor="nota"
         style={{ display: "block", color: "#AAAAAA", fontSize: 14, margin: "22px 0 8px" }}
       >
-        Si quieres contarnos algo más (opcional)
+        Si deseas agregar algo más (opcional)
       </label>
       <textarea
         id="nota"
@@ -114,7 +114,7 @@ export default function ReasonForm({ token, playerName }: Props) {
         onChange={(e) => setNota(e.target.value)}
         maxLength={500}
         rows={3}
-        placeholder="No hace falta que des detalles."
+        placeholder="No es necesario dar detalles."
         style={area}
       />
 
@@ -128,15 +128,15 @@ export default function ReasonForm({ token, playerName }: Props) {
           cursor: motivo ? "pointer" : "default",
         }}
       >
-        {enviando ? "Guardando…" : guardado ? "Cambiar lo que dije" : "Enviar"}
+        {enviando ? "Guardando…" : guardado ? "Cambiar mi respuesta" : "Enviar"}
       </button>
 
       {error && <p style={{ color: "#FF6B6B", fontSize: 14, marginTop: 14 }}>{error}</p>}
 
       <p style={{ color: GRIS_PIE, fontSize: 13, marginTop: 20, lineHeight: 1.6 }}>
-        No hace falta que respondas: contarlo solo le ahorra la pregunta a la
-        escuela. Nada de lo que escribas aquí cambia la asistencia de{" "}
-        {playerName} — eso lo lleva la escuela.
+        No es necesario que respondas. Informar el motivo le ayuda a la escuela a
+        llevar su registro. Lo que escribas aquí no cambia la asistencia de{" "}
+        {playerName}, porque ese registro lo lleva la escuela.
       </p>
     </div>
   );

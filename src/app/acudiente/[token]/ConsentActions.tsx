@@ -41,11 +41,11 @@ export default function ConsentActions({
       });
       if (!res.ok) {
         const cuerpo = await res.json().catch(() => null);
-        throw new Error(cuerpo?.message ?? "No se pudo guardar tu respuesta.");
+        throw new Error(cuerpo?.message ?? "No pudimos guardar tu respuesta. Inténtalo nuevamente.");
       }
       setHecho(cual);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "No se pudo guardar tu respuesta.");
+      setError(e instanceof Error ? e.message : "No pudimos guardar tu respuesta. Inténtalo nuevamente.");
     } finally {
       setEnviando(null);
     }
@@ -93,8 +93,8 @@ export default function ConsentActions({
       {error && <p style={{ color: "#FF6B6B", fontSize: 14, marginTop: 14 }}>{error}</p>}
 
       <p style={{ color: GRIS_PIE, fontSize: 13, marginTop: 20, lineHeight: 1.6 }}>
-        Si no haces nada, {playerName} no entra. No hace falta que respondas para
-        protegerlo.
+        Si no respondes, {playerName} no aparecerá en la plantilla del club. No necesitas
+        hacer nada para protegerlo.
       </p>
     </div>
   );

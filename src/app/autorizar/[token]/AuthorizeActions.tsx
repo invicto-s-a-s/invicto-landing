@@ -36,11 +36,11 @@ export default function AuthorizeActions({ token, minorName }: Props) {
       });
       if (!res.ok) {
         const cuerpo = await res.json().catch(() => null);
-        throw new Error(cuerpo?.message ?? "No se pudo guardar tu respuesta.");
+        throw new Error(cuerpo?.message ?? "No pudimos guardar tu respuesta. Inténtalo nuevamente.");
       }
       setHecho(cual);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "No se pudo guardar tu respuesta.");
+      setError(e instanceof Error ? e.message : "No pudimos guardar tu respuesta. Inténtalo nuevamente.");
     } finally {
       setEnviando(null);
     }
@@ -55,7 +55,7 @@ export default function AuthorizeActions({ token, minorName }: Props) {
         <p style={{ margin: "8px 0 0", color: "#AAAAAA", fontSize: 14, lineHeight: 1.6 }}>
           {hecho === "approved"
             ? `Ya puede escribirle a ${minorName}. Puedes retirar esta autorización en cualquier momento desde la cuenta de ${minorName}, en Configuración.`
-            : `Nadie podrá escribirle a ${minorName} desde esa cuenta. No tienes que hacer nada más.`}
+            : `Esa cuenta no podrá escribirle a ${minorName}. No tienes que hacer nada más.`}
         </p>
       </div>
     );
@@ -85,8 +85,8 @@ export default function AuthorizeActions({ token, minorName }: Props) {
       )}
 
       <p style={{ color: GRIS_PIE, fontSize: 13, marginTop: 20, lineHeight: 1.6 }}>
-        Si no haces nada, el contacto queda bloqueado. No hace falta que
-        respondas para proteger a {minorName}.
+        Si no respondes, el contacto permanecerá bloqueado. No necesitas hacer
+        nada para proteger a {minorName}.
       </p>
     </div>
   );

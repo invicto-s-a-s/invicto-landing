@@ -65,10 +65,10 @@ export default async function AutorizarPage({ params }: Props) {
   if (!peticion) {
     return (
       <MarcoDeEnlace>
-        <h1 style={titulo}>Este enlace ya no sirve</h1>
+        <h1 style={titulo}>Este enlace ya no es válido</h1>
         <p style={parrafo}>
-          Puede que haya caducado o que ya se haya respondido. Si crees que es un
-          error, pídele a tu hijo o hija que vuelva a intentarlo desde la app.
+          Es posible que haya expirado o que ya se haya respondido. Si crees que es un
+          error, pide a tu hijo o hija que lo intente nuevamente desde la app.
         </p>
       </MarcoDeEnlace>
     );
@@ -105,8 +105,8 @@ export default async function AutorizarPage({ params }: Props) {
       )}
 
       <p style={parrafo}>
-        Te escribimos a ti porque {menor} es menor de edad y te registró como su
-        representante. <strong>Sin tu autorización nadie puede enviarle mensajes.</strong>
+        Nos comunicamos contigo porque {menor} es menor de edad y te registró como su
+        representante. <strong>Sin tu autorización, ninguna persona puede enviarle mensajes.</strong>
       </p>
 
       {yaRespondida ? (
