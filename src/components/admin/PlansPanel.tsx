@@ -15,6 +15,9 @@ const VISTAS = [
 
 type Vista = (typeof VISTAS)[number]["value"];
 
+/** El único complemento del catálogo. Se concede con la misma ruta que un plan. */
+const PACK = "school_pack_25";
+
 /**
  * Dar un plan a una cuenta sin que lo haya pedido: un piloto, una cortesía,
  * una cuenta de demostración. Y quitarlo.
@@ -32,14 +35,17 @@ function AsignarAMano() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
-  const llamar = async (method: "PUT" | "DELETE") => {
+  /** `soloPack` quita el Pack +25 y deja el plan como estaba. */
+  const llamar = async (method: "PUT" | "DELETE", soloPack = false) => {
     if (!/^\d+$/.test(userId.trim())) { setMsg({ ok: false, text: "Escribe el número de la cuenta." }); return; }
     if (method === "PUT" && !planKey.trim()) { setMsg({ ok: false, text: "Escribe la clave del plan." }); return; }
-    if (method === "DELETE" && !confirm(`¿Quitarle el plan a la cuenta #${userId}? Vuelve a su plan de entrada.`)) return;
+    if (method === "DELETE" && !confirm(soloPack
+      ? `¿Quitarle el Pack +25 a la cuenta #${userId}? Su plan queda como está; los alumnos que solo cabían con el pack pierden el PRO.`
+      : `¿Quitarle el plan a la cuenta #${userId}? Vuelve a su plan de entrada, y si tenía Pack +25 se va con el plan.`)) return;
 
     setBusy(true);
     setMsg(null);
-    const res = await fetch(`/api/admin/admin/plan-grants/users/${userId.trim()}`, {
+    const res = await fetch(`/api/admin/admin/plan-grants/users/${userId.trim()}${soloPack ? `/addons/${PACK}` : ""}`, {
       method,
       headers: { "Content-Type": "application/json" },
       body: method === "PUT"
@@ -60,7 +66,7 @@ function AsignarAMano() {
     setMsg({
       ok: true,
       text: method === "DELETE"
-        ? "Plan quitado."
+        ? soloPack ? "Pack quitado. El plan sigue como estaba." : "Plan quitado."
         : `Concedido ${body?.data?.concedido}${body?.data?.hasta ? ` hasta el ${new Date(body.data.hasta).toLocaleDateString("es-CO")}` : ", sin fecha de fin"}.`,
     });
   };
@@ -87,6 +93,10 @@ function AsignarAMano() {
       <label className="grid gap-1 text-xs text-on-surface-variant">
         Clave del plan (tiene que ser del tipo de esa cuenta)
         <input className={campo} value={planKey} onChange={(e) => setPlanKey(e.target.value)} placeholder="school_semilla" />
+        <span>
+          El Pack +25 es <code>{PACK}</code>. No usa los meses: vence el mismo día que el plan de la
+          escuela y se renueva con él. Solo entra si la escuela tiene un plan de pago y no tiene ya uno.
+        </span>
       </label>
       <label className="grid gap-1 text-xs text-on-surface-variant">
         Meses — vacío es sin fecha de fin
@@ -99,9 +109,12 @@ function AsignarAMano() {
 
       {msg && <p className={`text-sm ${msg.ok ? "text-neon" : "text-[#FF5A5A]"}`}>{msg.text}</p>}
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <button onClick={() => llamar("DELETE")} disabled={busy} className="text-xs px-4 py-2 rounded-lg border border-[#FF5A5A] text-[#FF5A5A] disabled:opacity-40">
           Quitar el plan
+        </button>
+        <button onClick={() => llamar("DELETE", true)} disabled={busy} className="text-xs px-4 py-2 rounded-lg border border-[#FF5A5A] text-[#FF5A5A] disabled:opacity-40">
+          Quitar solo el Pack +25
         </button>
         <button onClick={() => llamar("PUT")} disabled={busy} className="text-xs px-4 py-2 rounded-lg bg-neon text-background font-medium disabled:opacity-40">
           {busy ? "…" : "Asignar"}

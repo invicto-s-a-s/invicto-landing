@@ -12,6 +12,8 @@ interface PlanRequest {
   role: string;
   plan_key: string;
   plan_name: string;
+  /** `addon` es el Pack +25: no lleva meses, dura lo que dure el plan de la escuela. */
+  plan_kind?: "plan" | "addon";
   period: "month" | "year";
   status: string;
   note: string | null;
@@ -60,7 +62,15 @@ export default function PlanRequests({ onChange }: { onChange?: () => void }) {
 
   const resolver = async (req: PlanRequest, aprobar: boolean) => {
     let payload: Record<string, unknown>;
-    if (aprobar) {
+    if (aprobar && req.plan_kind === "addon") {
+      // Un pack no se da por meses: vence el día que vence el plan y se
+      // renueva con él. El servidor lo rechaza si la escuela no tiene plan de
+      // pago o ya tiene uno, y ese motivo sale arriba.
+      if (!confirm(`¿Activar el ${req.plan_name} de @${req.username}?
+
+No lleva meses: vence el mismo día que su plan y se renueva con él.`)) return;
+      payload = {};
+    } else if (aprobar) {
       const porDefecto = req.period === "year" ? "12" : "1";
       const meses = prompt(`¿Por cuántos meses se le da el plan ${req.plan_name} a @${req.username}?`, porDefecto);
       if (meses === null) return;
@@ -126,7 +136,11 @@ Este texto lo va a leer la persona en la app, tal cual.`);
 
             <p className="text-sm mb-1">
               Pide <span className="text-neon font-medium">{req.plan_name}</span>{" "}
-              <span className="text-on-surface-variant">({req.plan_key} · {req.period === "year" ? "anual" : "mensual"})</span>
+              <span className="text-on-surface-variant">
+                ({req.plan_key} · {req.plan_kind === "addon"
+                  ? "complemento, vence con su plan"
+                  : req.period === "year" ? "anual" : "mensual"})
+              </span>
             </p>
             <p className="text-xs text-on-surface-variant mb-3">
               {req.email}{req.phone ? ` · ${req.phone}` : ""}
