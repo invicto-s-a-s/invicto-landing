@@ -69,7 +69,9 @@ export default function PlanRequests({ onChange }: { onChange?: () => void }) {
       payload = { months: n };
     } else {
       // El motivo lo lee quien pidió el plan: sin él no sabe qué pasó.
-      const note = prompt(`¿Por qué se rechaza la solicitud de @${req.username}?`);
+      const note = prompt(`¿Por qué no se puede confirmar la solicitud de @${req.username}?
+
+Este texto lo va a leer la persona en la app, tal cual.`);
       if (!note?.trim()) return;
       payload = { note: note.trim() };
     }

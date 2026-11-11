@@ -4,6 +4,7 @@ import { useState } from "react";
 import PlanRequests from "./PlanRequests";
 import PlanCatalog from "./PlanCatalog";
 import PlanGates from "./PlanGates";
+import AccountPicker from "./AccountPicker";
 
 const VISTAS = [
   { value: "solicitudes", label: "Solicitudes" },
@@ -18,11 +19,13 @@ type Vista = (typeof VISTAS)[number]["value"];
  * Dar un plan a una cuenta sin que lo haya pedido: un piloto, una cortesía,
  * una cuenta de demostración. Y quitarlo.
  *
- * Va por el número de cuenta, que sale en la pestaña Usuarios y en cada
- * solicitud. La clave del plan es la del catálogo (`school_semilla`).
+ * La cuenta se busca por nombre y se elige de la lista; el número queda a la
+ * vista y también se puede escribir a mano. La clave del plan es la del
+ * catálogo (`school_semilla`).
  */
 function AsignarAMano() {
   const [userId, setUserId] = useState("");
+  const [elegida, setElegida] = useState<string | null>(null);
   const [planKey, setPlanKey] = useState("");
   const [months, setMonths] = useState("");
   const [note, setNote] = useState("");
@@ -66,9 +69,20 @@ function AsignarAMano() {
 
   return (
     <div className="admin-card border border-[#222] rounded-xl p-5 max-w-xl grid gap-3">
+      <AccountPicker
+        onPick={(c) => {
+          setUserId(String(c.id));
+          setElegida(`${[c.name, c.last_name].filter(Boolean).join(" ") || c.username} · @${c.username}`);
+          setMsg(null);
+        }}
+      />
       <label className="grid gap-1 text-xs text-on-surface-variant">
         Número de cuenta
-        <input className={campo} inputMode="numeric" value={userId} onChange={(e) => setUserId(e.target.value)} placeholder="64" />
+        <input
+          className={campo} inputMode="numeric" value={userId} placeholder="64"
+          onChange={(e) => { setUserId(e.target.value); setElegida(null); }}
+        />
+        {elegida && <span className="text-neon">{elegida}</span>}
       </label>
       <label className="grid gap-1 text-xs text-on-surface-variant">
         Clave del plan (tiene que ser del tipo de esa cuenta)
