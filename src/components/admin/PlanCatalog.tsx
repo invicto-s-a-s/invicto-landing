@@ -2,7 +2,16 @@
 
 import { useCallback, useEffect, useState } from "react";
 import EditorDelCatalogo from "./EditorDelCatalogo";
-import { type Edicion, type Plan, pesos, valorDe } from "./catalogo-tipos";
+import { useCandadosAbiertos } from "./candados-abiertos";
+import { type Edicion, type Plan, estadoDe, pesos, valorDe } from "./catalogo-tipos";
+
+const MARCA = {
+  sin_efecto: {
+    texto: "Sin efecto",
+    ayuda: "El código no consulta esta casilla: cambiarla no cambia nada. Casi todas son lo que los planes anuncian como «Próximamente»; la corona y el número de visitas sí funcionan, pero no dependen de ella.",
+  },
+  abierta: { texto: "Abierta para todos", ayuda: "Es un candado abierto: este valor se aplica cuando lo cierres en Candados." },
+} as const;
 
 const SEGMENTOS: Record<string, string> = { player: "Jugador", scout: "Ojeador", club: "Club", school: "Escuela" };
 
@@ -31,6 +40,7 @@ export default function PlanCatalog() {
   useEffect(() => { load(); }, [load]);
 
   const [edicion, setEdicion] = useState<Edicion | null>(null);
+  const abiertas = useCandadosAbiertos();
 
   const guardar = async (url: string, method: "PUT" | "POST" | "DELETE", body?: unknown): Promise<boolean> => {
     setError(null);
@@ -53,7 +63,7 @@ export default function PlanCatalog() {
     const esDeCapacidad = edicion.tipo === "capacidad" || edicion.tipo === "quitar";
     if (esDeCapacidad !== enCapacidades) return null;
     const clave = `${edicion.tipo}-${p.key}-${esDeCapacidad ? edicion.f.feature_key : ""}`;
-    return <EditorDelCatalogo key={clave} edicion={edicion} guardar={guardar} cerrar={() => setEdicion(null)} />;
+    return <EditorDelCatalogo key={clave} edicion={edicion} abiertas={abiertas} guardar={guardar} cerrar={() => setEdicion(null)} />;
   };
 
   if (loading) return <p className="text-sm text-on-surface-variant">Cargando el catálogo…</p>;
@@ -77,7 +87,9 @@ export default function PlanCatalog() {
                         {p.name}{p.is_default ? " · de entrada" : ""}{p.kind === "addon" ? " · complemento" : ""}
                       </p>
                       <p className="text-xs text-on-surface-variant">
-                        {p.key} · nivel {p.tier} · {p.features.length} capacidades · {p.is_active ? "encendido" : "apagado"}
+                        {p.key} · nivel {p.tier} · {p.features.length} capacidades
+                        {p.features.some((f) => f.en_uso !== undefined) && `, ${p.features.filter((f) => f.en_uso).length} funcionan hoy`}
+                        {" · "}{p.is_active ? "encendido" : "apagado"}
                       </p>
                     </button>
                     <button onClick={() => setEdicion({ tipo: "nombre", plan: p })} className="text-xs px-3 py-1.5 rounded-lg bg-[#1A1A1A]">Renombrar</button>
@@ -105,23 +117,31 @@ export default function PlanCatalog() {
 
                   {open === p.key && (
                     <div className="mt-4 border-t border-[#1C1C1C] pt-3 grid gap-1.5">
-                      {p.features.map((f) => (
-                        <div key={f.feature_key} className={`flex items-center gap-3 text-xs ${f.feature_active ? "" : "opacity-50"}`}>
-                          <span className="flex-1 min-w-0">
-                            {f.description} <span className="text-on-surface-variant">({f.feature_key})</span>
-                          </span>
-                          <button onClick={() => setEdicion({ tipo: "capacidad", plan: p, f })} className="px-2.5 py-1 rounded-lg bg-[#1A1A1A] whitespace-nowrap">
-                            {valorDe(f)}
-                          </button>
-                          <button
-                            onClick={() => setEdicion({ tipo: "quitar", plan: p, f })}
-                            className="text-[#FF5A5A]"
-                            aria-label={`Quitar ${f.description}`}
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      ))}
+                      {p.features.map((f) => {
+                        const estado = estadoDe(f, abiertas);
+                        return (
+                          <div key={f.feature_key} className={`flex items-center gap-3 text-xs ${f.feature_active ? "" : "opacity-50"}`}>
+                            <span className={`flex-1 min-w-0 ${estado === "sin_efecto" ? "text-on-surface-variant" : ""}`}>
+                              {f.description} <span className="text-on-surface-variant">({f.feature_key})</span>
+                            </span>
+                            {estado && (
+                              <span title={MARCA[estado].ayuda} className={`px-2 py-0.5 rounded-md whitespace-nowrap ${estado === "abierta" ? "bg-neon/10 text-neon" : "bg-[#1A1A1A] text-[#FFB020]"}`}>
+                                {MARCA[estado].texto}
+                              </span>
+                            )}
+                            <button onClick={() => setEdicion({ tipo: "capacidad", plan: p, f })} className="px-2.5 py-1 rounded-lg bg-[#1A1A1A] whitespace-nowrap">
+                              {valorDe(f)}
+                            </button>
+                            <button
+                              onClick={() => setEdicion({ tipo: "quitar", plan: p, f })}
+                              className="text-[#FF5A5A]"
+                              aria-label={`Quitar ${f.description}`}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        );
+                      })}
                       {editorDe(p, true)}
                     </div>
                   )}

@@ -2,6 +2,8 @@ export interface Price { id: number; period: "month" | "year"; amount_cop: numbe
 export interface Feature {
   feature_key: string; kind: "bool" | "limit" | "value"; area: string; description: string;
   bool_value: boolean | null; limit_value: number | null; text_value: string | null; feature_active: boolean;
+  /** Si el código la pregunta. Lo manda el servidor desde 2026-11-12; sin él, no se dice nada. */
+  en_uso?: boolean;
 }
 export interface Plan {
   key: string; name: string; segment: string; kind: string; tier: number;
@@ -25,6 +27,19 @@ export function valorDe(f: Feature): string {
   if (f.kind === "bool") return f.bool_value ? "Sí" : "No";
   if (f.kind === "limit") return f.limit_value === null ? "Sin tope" : String(f.limit_value);
   return f.text_value ?? "—";
+}
+
+/**
+ * Lo que hay que saber antes de tocar una capacidad: si hoy no hace nada.
+ * `sin_efecto`: el código no la consulta (casi todas son «Próximamente»; la
+ * corona y el número de visitas funcionan, pero por otro camino).
+ * `abierta`: es un candado abierto para todos, y su valor no se aplica hasta
+ * cerrarlo en Candados.
+ */
+export function estadoDe(f: Feature, abiertas: Set<string> | null): "sin_efecto" | "abierta" | null {
+  if (f.en_uso === false) return "sin_efecto";
+  if (f.en_uso && abiertas?.has(f.feature_key)) return "abierta";
+  return null;
 }
 
 /** `AAAA-MM-DD` de hoy, con el día local (no el UTC). */

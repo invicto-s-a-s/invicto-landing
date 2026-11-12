@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { type Edicion, type Guardar, hoyLocal, pesos, valorDe } from "./catalogo-tipos";
+import { type Edicion, type Guardar, estadoDe, hoyLocal, pesos, valorDe } from "./catalogo-tipos";
 
 const campo = "w-full bg-[#141414] border border-[#222] rounded-lg px-3 py-2 text-sm text-on-surface";
 const boton = "text-xs px-4 py-2 rounded-lg disabled:opacity-40";
@@ -16,7 +16,9 @@ const chip = (on: boolean) => `text-xs px-3 py-1.5 rounded-lg ${on ? "bg-neon te
  * cada caso dice qué se escribe, enseña lo que va a quedar y **a quién le
  * llega** antes de guardar. Todo lo de aquí afecta a las cuentas reales.
  */
-export default function EditorDelCatalogo({ edicion, guardar, cerrar }: { edicion: Edicion; guardar: Guardar; cerrar: () => void }) {
+type Props = { edicion: Edicion; abiertas: Set<string> | null; guardar: Guardar; cerrar: () => void };
+
+export default function EditorDelCatalogo({ edicion, abiertas, guardar, cerrar }: Props) {
   const p = edicion.plan;
   const base = `/api/admin/admin/plans/${p.key}`;
   const [busy, setBusy] = useState(false);
@@ -49,7 +51,17 @@ export default function EditorDelCatalogo({ edicion, guardar, cerrar }: { edicio
       </button>
     </div>
   );
-  const aviso = <p className="text-xs text-[#FFB020]">Afecta a todas las cuentas con el plan {p.name}, ahora mismo.</p>;
+  // Antes de guardar se dice si el cambio va a notarse: hay capacidades que hoy no hacen nada.
+  const estado = f ? estadoDe(f, abiertas) : null;
+  const aviso = (
+    <p className="text-xs text-[#FFB020]">
+      {estado === "sin_efecto"
+        ? "El código no consulta esta casilla: puedes guardarla, pero hoy no cambia nada para nadie."
+        : estado === "abierta"
+          ? `Este candado está abierto para todos. El valor se aplicará a las cuentas con el plan ${p.name} cuando lo cierres en Candados.`
+          : `Afecta a todas las cuentas con el plan ${p.name}, ahora mismo.`}
+    </p>
+  );
 
   let cuerpo: React.ReactNode;
   if (edicion.tipo === "nombre") {

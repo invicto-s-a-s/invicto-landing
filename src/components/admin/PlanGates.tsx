@@ -1,8 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-
-const RUTA = "/api/admin/admin/parameters/launch.open_features";
+import { RUTA_CANDADOS as RUTA, leerCandados as leer } from "./candados-abiertos";
 
 /**
  * Los candados que existen, con lo que pasa al cerrarlos. Tiene que ir a la par
@@ -18,9 +17,6 @@ const CANDADOS = [
   { key: "search.scope", nombre: "Búsqueda nacional de clubes", cerrado: "Un club busca solo entre quienes se postularon a sus convocatorias, salvo Cantera." },
   { key: "panel.full", nombre: "Panel completo del club", cerrado: "Partidos, embudo de convocatorias, cara a cara y alineación quedan desde Regional. Las escuelas de pago no lo tienen en el catálogo de hoy." },
 ] as const;
-
-const leer = (valor: string) =>
-  new Set(valor.split(",").map((k) => k.trim().toLowerCase()).filter(Boolean));
 
 /**
  * Abrir y cerrar los candados por plan.
