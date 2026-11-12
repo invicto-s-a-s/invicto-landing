@@ -1,26 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-
-interface Price { id: number; period: "month" | "year"; amount_cop: number; effective_from: string | null }
-interface Feature {
-  feature_key: string; kind: "bool" | "limit" | "value"; area: string; description: string;
-  bool_value: boolean | null; limit_value: number | null; text_value: string | null; feature_active: boolean;
-}
-interface Plan {
-  key: string; name: string; segment: string; kind: string; tier: number;
-  is_default: boolean; is_active: boolean; prices: Price[]; features: Feature[];
-}
+import EditorDelCatalogo from "./EditorDelCatalogo";
+import { type Edicion, type Plan, pesos, valorDe } from "./catalogo-tipos";
 
 const SEGMENTOS: Record<string, string> = { player: "Jugador", scout: "Ojeador", club: "Club", school: "Escuela" };
-const pesos = (n: number) => `$${Math.round(n).toLocaleString("es-CO")}`;
-
-/** El valor de una capacidad en un plan, dicho en corto. */
-function valorDe(f: Feature): string {
-  if (f.kind === "bool") return f.bool_value ? "Sí" : "No";
-  if (f.kind === "limit") return f.limit_value === null ? "Sin tope" : String(f.limit_value);
-  return f.text_value ?? "—";
-}
 
 /**
  * El catálogo de planes, editable.
@@ -46,7 +30,9 @@ export default function PlanCatalog() {
 
   useEffect(() => { load(); }, [load]);
 
-  const guardar = async (url: string, method: "PUT" | "POST" | "DELETE", body?: unknown) => {
+  const [edicion, setEdicion] = useState<Edicion | null>(null);
+
+  const guardar = async (url: string, method: "PUT" | "POST" | "DELETE", body?: unknown): Promise<boolean> => {
     setError(null);
     const res = await fetch(url, {
       method,
@@ -58,45 +44,16 @@ export default function PlanCatalog() {
       setError(typeof data?.message === "string" ? data.message : "No se pudo guardar el cambio.");
     }
     load();
+    return !!res?.ok;
   };
 
-  const renombrar = (p: Plan) => {
-    const name = prompt(`Nombre del plan (${p.key})`, p.name);
-    if (name?.trim() && name.trim() !== p.name) void guardar(`/api/admin/admin/plans/${p.key}`, "PUT", { name: name.trim() });
-  };
-
-  const encender = (p: Plan) => {
-    const frase = p.is_active
-      ? `¿Apagar el plan ${p.name}?\n\nQuien lo tenga cae a su plan de entrada.`
-      : `¿Encender el plan ${p.name}?`;
-    if (confirm(frase)) void guardar(`/api/admin/admin/plans/${p.key}`, "PUT", { is_active: !p.is_active });
-  };
-
-  const anadirPrecio = (p: Plan) => {
-    const periodo = prompt("¿Mensual o anual? Escribe «mes» o «año».", "mes");
-    if (!periodo) return;
-    const monto = prompt("Precio en pesos, sin puntos. 0 es gratis.");
-    if (monto === null || !/^\d+$/.test(monto.trim())) return;
-    const desde = prompt("¿Desde qué fecha rige? AAAA-MM-DD. Vacío = precio de lista, sin fecha (se enseña y no se cobra).", "");
-    if (desde === null) return;
-    void guardar(`/api/admin/admin/plans/${p.key}/prices`, "POST", {
-      period: periodo.trim().toLowerCase().startsWith("a") ? "year" : "month",
-      amount_cop: Number(monto.trim()),
-      effective_from: desde.trim() || null,
-    });
-  };
-
-  const cambiarCapacidad = (p: Plan, f: Feature) => {
-    const url = `/api/admin/admin/plans/${p.key}/features/${f.feature_key}`;
-    if (f.kind === "bool") return void guardar(url, "PUT", { bool_value: !f.bool_value });
-    if (f.kind === "limit") {
-      const v = prompt(`${f.description}\n\nTope para ${p.name}. Vacío = sin tope.`, f.limit_value === null ? "" : String(f.limit_value));
-      if (v === null) return;
-      if (v.trim() !== "" && !/^\d+$/.test(v.trim())) { setError("El tope es un número entero."); return; }
-      return void guardar(url, "PUT", { limit_value: v.trim() === "" ? null : Number(v.trim()) });
-    }
-    const v = prompt(`${f.description}\n\nValor para ${p.name}.`, f.text_value ?? "");
-    if (v !== null) void guardar(url, "PUT", { text_value: v.trim() || null });
+  /** El editor va en la tarjeta del plan que se toca; `key` lo reinicia al cambiar de cosa. */
+  const editorDe = (p: Plan, enCapacidades: boolean) => {
+    if (!edicion || edicion.plan.key !== p.key) return null;
+    const esDeCapacidad = edicion.tipo === "capacidad" || edicion.tipo === "quitar";
+    if (esDeCapacidad !== enCapacidades) return null;
+    const clave = `${edicion.tipo}-${p.key}-${esDeCapacidad ? edicion.f.feature_key : ""}`;
+    return <EditorDelCatalogo key={clave} edicion={edicion} guardar={guardar} cerrar={() => setEdicion(null)} />;
   };
 
   if (loading) return <p className="text-sm text-on-surface-variant">Cargando el catálogo…</p>;
@@ -123,14 +80,16 @@ export default function PlanCatalog() {
                         {p.key} · nivel {p.tier} · {p.features.length} capacidades · {p.is_active ? "encendido" : "apagado"}
                       </p>
                     </button>
-                    <button onClick={() => renombrar(p)} className="text-xs px-3 py-1.5 rounded-lg bg-[#1A1A1A]">Renombrar</button>
-                    <button onClick={() => anadirPrecio(p)} className="text-xs px-3 py-1.5 rounded-lg bg-[#1A1A1A]">Añadir precio</button>
+                    <button onClick={() => setEdicion({ tipo: "nombre", plan: p })} className="text-xs px-3 py-1.5 rounded-lg bg-[#1A1A1A]">Renombrar</button>
+                    <button onClick={() => setEdicion({ tipo: "precio", plan: p })} className="text-xs px-3 py-1.5 rounded-lg bg-[#1A1A1A]">Añadir precio</button>
                     {!p.is_default && (
-                      <button onClick={() => encender(p)} className="text-xs px-3 py-1.5 rounded-lg border border-[#333]">
+                      <button onClick={() => setEdicion({ tipo: "encendido", plan: p })} className="text-xs px-3 py-1.5 rounded-lg border border-[#333]">
                         {p.is_active ? "Apagar" : "Encender"}
                       </button>
                     )}
                   </div>
+
+                  {editorDe(p, false)}
 
                   <div className="flex flex-wrap gap-2 mt-3">
                     {p.prices.length === 0 && <span className="text-xs text-on-surface-variant">Sin precios.</span>}
@@ -151,12 +110,11 @@ export default function PlanCatalog() {
                           <span className="flex-1 min-w-0">
                             {f.description} <span className="text-on-surface-variant">({f.feature_key})</span>
                           </span>
-                          <button onClick={() => cambiarCapacidad(p, f)} className="px-2.5 py-1 rounded-lg bg-[#1A1A1A] whitespace-nowrap">
+                          <button onClick={() => setEdicion({ tipo: "capacidad", plan: p, f })} className="px-2.5 py-1 rounded-lg bg-[#1A1A1A] whitespace-nowrap">
                             {valorDe(f)}
                           </button>
                           <button
-                            onClick={() => confirm(`¿Quitar «${f.description}» del plan ${p.name}?`)
-                              && void guardar(`/api/admin/admin/plans/${p.key}/features/${f.feature_key}`, "DELETE")}
+                            onClick={() => setEdicion({ tipo: "quitar", plan: p, f })}
                             className="text-[#FF5A5A]"
                             aria-label={`Quitar ${f.description}`}
                           >
@@ -164,6 +122,7 @@ export default function PlanCatalog() {
                           </button>
                         </div>
                       ))}
+                      {editorDe(p, true)}
                     </div>
                   )}
                 </div>
