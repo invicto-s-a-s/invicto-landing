@@ -14,12 +14,22 @@ interface PlanRequest {
   plan_name: string;
   /** `addon` es el Pack +25: no lleva meses, dura lo que dure el plan de la escuela. */
   plan_kind?: "plan" | "addon";
+  /**
+   * Solo en los packs pendientes: lo que hay que cobrar hoy, la parte que falta
+   * hasta el corte del plan (Alexander, 2026-11-11). `null` si la escuela ya no
+   * tiene plan de pago y no se puede aprobar.
+   */
+  cobro_hoy?: number | null;
+  vence_con_el_plan?: string | null;
   period: "month" | "year";
   status: string;
   note: string | null;
   created_at: string;
   resolution_note: string | null;
 }
+
+const pesos = (n: number) => `$${n.toLocaleString("es-CO")}`;
+const fecha = (iso: string) => new Date(iso).toLocaleDateString("es-CO");
 
 const TABS = [
   { value: "pending", label: "Pendientes" },
@@ -66,9 +76,12 @@ export default function PlanRequests({ onChange }: { onChange?: () => void }) {
       // Un pack no se da por meses: vence el día que vence el plan y se
       // renueva con él. El servidor lo rechaza si la escuela no tiene plan de
       // pago o ya tiene uno, y ese motivo sale arriba.
+      const cobro = typeof req.cobro_hoy === "number"
+        ? `\n\nCobrar hoy: ${pesos(req.cobro_hoy)}, la parte que falta hasta su corte.`
+        : "";
       if (!confirm(`¿Activar el ${req.plan_name} de @${req.username}?
 
-No lleva meses: vence el mismo día que su plan y se renueva con él.`)) return;
+No lleva meses: vence el mismo día que su plan y se renueva con él.${cobro}`)) return;
       payload = {};
     } else if (aprobar) {
       const porDefecto = req.period === "year" ? "12" : "1";
@@ -145,6 +158,15 @@ Este texto lo va a leer la persona en la app, tal cual.`);
             <p className="text-xs text-on-surface-variant mb-3">
               {req.email}{req.phone ? ` · ${req.phone}` : ""}
             </p>
+
+            {req.plan_kind === "addon" && req.status === "pending" && (
+              <p className="text-sm mb-3">
+                {typeof req.cobro_hoy === "number"
+                  ? <>Cobrar hoy <span className="text-neon font-medium">{pesos(req.cobro_hoy)}</span>
+                      {req.vence_con_el_plan ? `, la parte que falta hasta su corte del ${fecha(req.vence_con_el_plan)}.` : "."}</>
+                  : <span className="text-[#FF5A5A]">La escuela ya no tiene un plan de pago: esta solicitud no se puede aprobar.</span>}
+              </p>
+            )}
 
             {req.note && <p className="text-xs text-on-surface-variant italic mb-3">«{req.note}»</p>}
             {req.resolution_note && <p className="text-xs text-on-surface-variant mb-3">Respuesta: {req.resolution_note}</p>}
