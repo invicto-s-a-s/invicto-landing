@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import ResolverSolicitud, { type Respuesta } from "./ResolverSolicitud";
 
 interface PlanRequest {
   id: number;
@@ -70,35 +71,10 @@ export default function PlanRequests({ onChange }: { onChange?: () => void }) {
 
   useEffect(() => { load(); }, [load]);
 
-  const resolver = async (req: PlanRequest, aprobar: boolean) => {
-    let payload: Record<string, unknown>;
-    if (aprobar && req.plan_kind === "addon") {
-      // Un pack no se da por meses: vence el día que vence el plan y se
-      // renueva con él. El servidor lo rechaza si la escuela no tiene plan de
-      // pago o ya tiene uno, y ese motivo sale arriba.
-      const cobro = typeof req.cobro_hoy === "number"
-        ? `\n\nCobrar hoy: ${pesos(req.cobro_hoy)}, la parte que falta hasta su corte.`
-        : "";
-      if (!confirm(`¿Activar el ${req.plan_name} de @${req.username}?
-
-No lleva meses: vence el mismo día que su plan y se renueva con él.${cobro}`)) return;
-      payload = {};
-    } else if (aprobar) {
-      const porDefecto = req.period === "year" ? "12" : "1";
-      const meses = prompt(`¿Por cuántos meses se le da el plan ${req.plan_name} a @${req.username}?`, porDefecto);
-      if (meses === null) return;
-      const n = Number(meses);
-      if (!Number.isInteger(n) || n < 1 || n > 36) { setError("Los meses van de 1 a 36."); return; }
-      payload = { months: n };
-    } else {
-      // El motivo lo lee quien pidió el plan: sin él no sabe qué pasó.
-      const note = prompt(`¿Por qué no se puede confirmar la solicitud de @${req.username}?
-
-Este texto lo va a leer la persona en la app, tal cual.`);
-      if (!note?.trim()) return;
-      payload = { note: note.trim() };
-    }
-
+  // Qué se escribe en cada caso (meses o el motivo) lo pide ResolverSolicitud.
+  // Un pack no lleva meses; el servidor lo rechaza si la escuela no tiene plan
+  // de pago o ya tiene uno, y ese motivo sale arriba.
+  const resolver = async (req: PlanRequest, aprobar: boolean, payload: Respuesta) => {
     setBusy(req.id);
     setError(null);
     const res = await fetch(`/api/admin/admin/plan-grants/requests/${req.id}/${aprobar ? "approve" : "reject"}`, {
@@ -172,22 +148,15 @@ Este texto lo va a leer la persona en la app, tal cual.`);
             {req.resolution_note && <p className="text-xs text-on-surface-variant mb-3">Respuesta: {req.resolution_note}</p>}
 
             {req.status === "pending" && (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => resolver(req, false)}
-                  disabled={busy === req.id}
-                  className="text-xs px-4 py-2 rounded-lg border border-[#FF5A5A] text-[#FF5A5A] disabled:opacity-40"
-                >
-                  Rechazar
-                </button>
-                <button
-                  onClick={() => resolver(req, true)}
-                  disabled={busy === req.id}
-                  className="text-xs px-4 py-2 rounded-lg bg-neon text-background font-medium disabled:opacity-40"
-                >
-                  {busy === req.id ? "…" : "Aprobar"}
-                </button>
-              </div>
+              <ResolverSolicitud
+                username={req.username}
+                planName={req.plan_name}
+                esPack={req.plan_kind === "addon"}
+                period={req.period}
+                cobroHoy={req.cobro_hoy}
+                busy={busy === req.id}
+                onResolver={(aprobar, payload) => resolver(req, aprobar, payload)}
+              />
             )}
           </div>
         ))}
