@@ -1,8 +1,19 @@
 import { NextResponse } from "next/server";
 import { API_URL, TOKEN_COOKIE } from "@/lib/admin-api";
 
-/** Una semana, lo mismo que dura el JWT del backend. */
-const WEEK = 60 * 60 * 24 * 7;
+/**
+ * La sesión del panel dura 12 horas, aunque el token del servidor dure una
+ * semana: desde aquí se abren documentos de identidad de menores, y una
+ * sesión olvidada en un computador ajeno no debería servir días (WEB-01).
+ */
+const SESION = 60 * 60 * 12;
+
+/**
+ * El mismo texto si la contraseña está mal y si la cuenta no tiene acceso: con
+ * dos distintos, el panel le diría a quien prueba que acertó la contraseña de
+ * una cuenta de la app.
+ */
+const NO_ENTRA = "Correo o contraseña incorrectos, o esa cuenta no tiene acceso al panel.";
 
 /**
  * Entrar al panel.
@@ -28,11 +39,13 @@ export async function POST(request: Request) {
   const body = await auth?.json().catch(() => null);
   const token = body?.data?.access_token;
 
+  // El freno de intentos lo pone el servidor (10 fallos por cuenta, 30 por
+  // minuto): su aviso se enseña tal cual.
+  if (auth?.status === 429) {
+    return NextResponse.json({ message: body?.message ?? "Demasiados intentos. Espera unos minutos." }, { status: 429 });
+  }
   if (!auth?.ok || !token) {
-    return NextResponse.json(
-      { message: body?.message ?? "Correo o contraseña incorrectos" },
-      { status: 401 },
-    );
+    return NextResponse.json({ message: NO_ENTRA }, { status: 401 });
   }
 
   // Se comprueba el permiso ANTES de dejar la cookie: si no, alguien sin acceso
@@ -43,10 +56,7 @@ export async function POST(request: Request) {
   }).catch(() => null);
 
   if (!me?.ok) {
-    return NextResponse.json(
-      { message: "Esa cuenta no tiene acceso al panel" },
-      { status: 403 },
-    );
+    return NextResponse.json({ message: NO_ENTRA }, { status: 401 });
   }
 
   const response = NextResponse.json({ ok: true });
@@ -55,7 +65,7 @@ export async function POST(request: Request) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: WEEK,
+    maxAge: SESION,
   });
   return response;
 }
