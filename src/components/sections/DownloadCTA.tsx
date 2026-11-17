@@ -1,15 +1,12 @@
 "use client";
 
+import { PLAY_STORE_URL } from "@/lib/descarga";
 import { motion } from "framer-motion";
 
 const MOCKUP_URL =
   "/celular-app-invicto-home.jpg"; // Placeholder for the app mockup image
 
-interface DownloadCTAProps {
-  onCTAClick: () => void;
-}
-
-export default function DownloadCTA({ onCTAClick }: DownloadCTAProps) {
+export default function DownloadCTA() {
   return (
     <section className="py-32 relative overflow-hidden bg-surface-container-low">
       {/* Background decorative elements */}
@@ -50,7 +47,7 @@ export default function DownloadCTA({ onCTAClick }: DownloadCTAProps) {
             viewport={{ once: true, margin: "-80px" }}
           >
             <span className="font-mono text-neon text-[10px] tracking-[0.35em] uppercase mb-6 block">
-              Acceso anticipado · Beta
+              Ya disponible en Google Play
             </span>
 
             <h2
@@ -68,31 +65,33 @@ export default function DownloadCTA({ onCTAClick }: DownloadCTAProps) {
               parte del recorrido.
             </p>
 
-            {/* Access request CTA */}
+            {/* Descargar */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-              <motion.button
-                onClick={onCTAClick}
+              <motion.a
+                href={PLAY_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.04, boxShadow: "0 0 50px rgba(170,255,0,0.4)" }}
                 whileTap={{ scale: 0.96 }}
                 className="relative bg-neon text-background font-headline font-black italic text-lg px-10 py-5 skew-card overflow-hidden group"
               >
                 <span className="skew-content flex items-center gap-3 relative z-10">
-                  SOLICITAR ACCESO
-                  <span className="material-symbols-outlined text-xl">arrow_forward</span>
+                  DESCARGAR LA APP
+                  <span className="material-symbols-outlined text-xl">download</span>
                 </span>
                 <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-              </motion.button>
+              </motion.a>
 
               <div className="flex items-center gap-2.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-neon animate-pulse" />
                 <span className="font-mono text-on-background/40 text-[10px] tracking-[0.25em] uppercase">
-                  Cupos limitados
+                  Gratis para empezar
                 </span>
               </div>
             </div>
 
             <div className="mt-10 font-mono text-on-background/25 text-[10px] tracking-[0.25em] uppercase">
-              Próximamente en iOS y Android · Gratis para empezar
+              Disponible en Android · Próximamente en iOS
             </div>
           </motion.div>
         </div>

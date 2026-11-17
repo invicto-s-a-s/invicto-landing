@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/sections/Hero";
 import VideoShowcase from "@/components/sections/VideoShowcase";
@@ -13,23 +11,18 @@ import Ratings from "@/components/sections/Ratings";
 import Ecosystem from "@/components/sections/Ecosystem";
 import DownloadCTA from "@/components/sections/DownloadCTA";
 import Footer from "@/components/Footer";
-import AccessRequestModal from "@/components/AccessRequestModal";
 import WhatsAppButton from "@/components/WhatsAppButton";
 
 export default function Landing() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const open = () => setModalOpen(true);
-  const close = () => setModalOpen(false);
-
   return (
     <>
       {/* Film grain overlay */}
       <div className="grain-overlay" />
 
-      <Navbar onCTAClick={open} />
+      <Navbar />
 
       <main>
-        <Hero onCTAClick={open} />
+        <Hero />
         <VideoShowcase />
         <Problem />
         <HowItWorks />
@@ -37,14 +30,13 @@ export default function Landing() {
         <Features />
         <Ratings />
         <Ecosystem />
-        <DownloadCTA onCTAClick={open} />
+        <DownloadCTA />
       </main>
 
-      <Footer onCTAClick={open} />
+      <Footer />
 
       <WhatsAppButton />
 
-      <AccessRequestModal isOpen={modalOpen} onClose={close} />
     </>
   );
 }

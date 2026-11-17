@@ -1,13 +1,10 @@
 "use client";
 
+import { PLAY_STORE_URL } from "@/lib/descarga";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-interface NavbarProps {
-  onCTAClick: () => void;
-}
-
-export default function Navbar({ onCTAClick }: NavbarProps) {
+export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -51,14 +48,16 @@ export default function Navbar({ onCTAClick }: NavbarProps) {
           ))}
         </div>
 
-        <motion.button
-          onClick={onCTAClick}
+        <motion.a
+          href={PLAY_STORE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           whileHover={{ scale: 1.06, boxShadow: "0 0 30px rgba(170,255,0,0.4)" }}
           whileTap={{ scale: 0.95 }}
           className="bg-neon text-background font-headline font-black italic px-7 py-2.5 skew-card transition-shadow duration-300"
         >
-          <span className="skew-content text-sm">SOLICITAR ACCESO</span>
-        </motion.button>
+          <span className="skew-content text-sm">DESCARGAR</span>
+        </motion.a>
       </div>
     </motion.nav>
   );

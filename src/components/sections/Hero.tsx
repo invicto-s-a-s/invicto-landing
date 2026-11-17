@@ -1,5 +1,6 @@
 "use client";
 
+import { PLAY_STORE_URL } from "@/lib/descarga";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
@@ -16,14 +17,10 @@ const LINES = [
 const STATS = [
   { value: "100+", label: "Jugadores" },
   { value: "Colombia", label: "País de origen" },
-  { value: "Beta", label: "Fase actual" },
+  { value: "Android", label: "Ya en Google Play" },
 ];
 
-interface HeroProps {
-  onCTAClick: () => void;
-}
-
-export default function Hero({ onCTAClick }: HeroProps) {
+export default function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -113,18 +110,20 @@ export default function Hero({ onCTAClick }: HeroProps) {
               transition={{ duration: 0.7, delay: 0.88 }}
               className="flex flex-wrap gap-4 mb-16"
             >
-              <motion.button
-                onClick={onCTAClick}
+              <motion.a
+                href={PLAY_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.04, boxShadow: "0 0 50px rgba(170,255,0,0.4)" }}
                 whileTap={{ scale: 0.96 }}
                 className="relative bg-neon text-background font-headline font-black italic text-lg px-10 py-5 skew-card overflow-hidden group"
               >
                 <span className="skew-content flex items-center gap-3 relative z-10">
-                  SOLICITAR ACCESO
-                  <span className="material-symbols-outlined text-xl">arrow_forward</span>
+                  DESCARGAR LA APP
+                  <span className="material-symbols-outlined text-xl">download</span>
                 </span>
                 <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-              </motion.button>
+              </motion.a>
 
               <motion.a
                 href="#como-funciona"

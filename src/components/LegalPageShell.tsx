@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import Footer from "@/components/Footer";
-import AccessRequestModal from "@/components/AccessRequestModal";
 
 interface LegalPageShellProps {
   title: string;
@@ -12,8 +10,6 @@ interface LegalPageShellProps {
 }
 
 export default function LegalPageShell({ title, lastUpdated, children }: LegalPageShellProps) {
-  const [modalOpen, setModalOpen] = useState(false);
-
   return (
     <>
       <div className="grain-overlay" />
@@ -60,8 +56,7 @@ export default function LegalPageShell({ title, lastUpdated, children }: LegalPa
         </div>
       </main>
 
-      <Footer onCTAClick={() => setModalOpen(true)} />
-      <AccessRequestModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <Footer />
     </>
   );
 }

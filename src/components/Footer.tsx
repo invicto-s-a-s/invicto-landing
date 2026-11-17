@@ -1,11 +1,8 @@
 "use client";
 
+import { PLAY_STORE_URL } from "@/lib/descarga";
 import Link from "next/link";
 import { motion } from "framer-motion";
-
-interface FooterProps {
-  onCTAClick: () => void;
-}
 
 const NAV_LINKS = [
   { label: "Privacidad", href: "/politica-de-privacidad" },
@@ -49,7 +46,7 @@ const SOCIAL_LINKS = [
   },
 ];
 
-export default function Footer({ onCTAClick }: FooterProps) {
+export default function Footer() {
   return (
     <footer className="py-16 border-t border-neon/10 relative z-10" style={{ background: "rgb(13 13 13 / 0.75)" }}>
       <div className="max-w-7xl mx-auto px-6">
@@ -85,14 +82,16 @@ export default function Footer({ onCTAClick }: FooterProps) {
             })}
           </div>
 
-          {/* Access request */}
+          {/* Descargar */}
           <div>
-            <button
-              onClick={onCTAClick}
-              className="bg-neon text-background font-headline font-black italic px-6 py-2.5 skew-card hover:shadow-[0_0_30px_rgba(170,255,0,0.4)] transition-shadow duration-300"
+            <a
+              href={PLAY_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-neon text-background font-headline font-black italic px-6 py-2.5 skew-card hover:shadow-[0_0_30px_rgba(170,255,0,0.4)] transition-shadow duration-300"
             >
-              <span className="skew-content text-sm">SOLICITAR ACCESO</span>
-            </button>
+              <span className="skew-content text-sm">DESCARGAR LA APP</span>
+            </a>
           </div>
         </div>
 
