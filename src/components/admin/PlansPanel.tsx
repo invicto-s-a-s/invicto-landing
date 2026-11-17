@@ -5,12 +5,14 @@ import PlanRequests from "./PlanRequests";
 import PlanCatalog from "./PlanCatalog";
 import PlanGates from "./PlanGates";
 import AccountPicker from "./AccountPicker";
+import AccesoTotal from "./AccesoTotal";
 
 const VISTAS = [
   { value: "solicitudes", label: "Solicitudes" },
   { value: "asignar", label: "Asignar a mano" },
   { value: "catalogo", label: "Catálogo" },
   { value: "candados", label: "Candados" },
+  { value: "acceso", label: "Acceso total" },
 ] as const;
 
 type Vista = (typeof VISTAS)[number]["value"];
@@ -152,6 +154,7 @@ export default function PlansPanel() {
       {vista === "asignar" && <AsignarAMano />}
       {vista === "catalogo" && <PlanCatalog />}
       {vista === "candados" && <PlanGates />}
+      {vista === "acceso" && <AccesoTotal />}
     </div>
   );
 }

@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import EditorDelCatalogo from "./EditorDelCatalogo";
+import NuevoPlan from "./NuevoPlan";
+import AnadirCapacidad, { type Capacidad } from "./AnadirCapacidad";
 import { useCandadosAbiertos } from "./candados-abiertos";
 import { type Edicion, type Plan, estadoDe, pesos, valorDe } from "./catalogo-tipos";
 
@@ -28,6 +30,9 @@ export default function PlanCatalog() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  /** Lo que el servidor hizo de más: los planes de arriba que también cambiaron. */
+  const [aviso, setAviso] = useState<string | null>(null);
+  const [todas, setTodas] = useState<Capacidad[]>([]);
 
   const load = useCallback(() => {
     fetch("/api/admin/admin/plans")
@@ -35,6 +40,12 @@ export default function PlanCatalog() {
       .then((body) => setPlans(Array.isArray(body.data) ? body.data : []))
       .catch(() => setPlans([]))
       .finally(() => setLoading(false));
+    // Todas las capacidades, también las que no están en ningún plan. Un
+    // servidor anterior no tiene esta ruta: sin ella no se ofrece añadir.
+    fetch("/api/admin/admin/plans/features")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((body) => setTodas(Array.isArray(body?.data) ? body.data : []))
+      .catch(() => setTodas([]));
   }, []);
 
   useEffect(() => { load(); }, [load]);
@@ -44,14 +55,19 @@ export default function PlanCatalog() {
 
   const guardar = async (url: string, method: "PUT" | "POST" | "DELETE", body?: unknown): Promise<boolean> => {
     setError(null);
+    setAviso(null);
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
     }).catch(() => null);
+    const data = await res?.json().catch(() => null);
     if (!res?.ok) {
-      const data = await res?.json().catch(() => null);
       setError(typeof data?.message === "string" ? data.message : "No se pudo guardar el cambio.");
+    } else if (Array.isArray(data?.data?.arrastradas) && data.data.arrastradas.length > 0) {
+      setAviso(`Guardado. También quedó en ${data.data.arrastradas.join(", ")}, que están por encima.`);
+    } else if (typeof data?.data?.key === "string") {
+      setAviso("Plan creado. Está apagado: ponle precio, marca lo que trae de más y enciéndelo.");
     }
     load();
     return !!res?.ok;
@@ -70,7 +86,9 @@ export default function PlanCatalog() {
 
   return (
     <div>
+      <NuevoPlan plans={plans} guardar={guardar} />
       {error && <p className="text-sm text-[#FF5A5A] mb-3">{error}</p>}
+      {aviso && <p className="text-sm text-neon mb-3">{aviso}</p>}
 
       {Object.entries(SEGMENTOS).map(([segmento, etiqueta]) => {
         const suyos = plans.filter((p) => p.segment === segmento).sort((a, b) => a.tier - b.tier);
@@ -143,6 +161,7 @@ export default function PlanCatalog() {
                         );
                       })}
                       {editorDe(p, true)}
+                      <AnadirCapacidad plan={p} todas={todas} guardar={guardar} />
                     </div>
                   )}
                 </div>
