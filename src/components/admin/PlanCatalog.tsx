@@ -26,6 +26,8 @@ export default function PlanCatalog() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  /** Lo que el servidor hizo de más: los planes de arriba que también cambiaron. */
+  const [aviso, setAviso] = useState<string | null>(null);
   const [creando, setCreando] = useState(false);
   const [cuenta, setCuenta] = useState<number | null>(null);
 
@@ -46,14 +48,17 @@ export default function PlanCatalog() {
 
   const guardar = async (url: string, method: "PUT" | "POST" | "DELETE", body?: unknown): Promise<boolean> => {
     setError(null);
+    setAviso(null);
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
     }).catch(() => null);
+    const data = await res?.json().catch(() => null);
     if (!res?.ok) {
-      const data = await res?.json().catch(() => null);
       setError(typeof data?.message === "string" ? data.message : "No fue posible guardar el cambio.");
+    } else if (Array.isArray(data?.data?.arrastradas) && data.data.arrastradas.length > 0) {
+      setAviso(`Guardado. También quedó en ${data.data.arrastradas.join(", ")}, que están por encima.`);
     }
     load();
     return !!res?.ok;
@@ -89,6 +94,7 @@ export default function PlanCatalog() {
       )}
 
       {error && <p className="text-sm text-[#FF5A5A] mb-3">{error}</p>}
+      {aviso && <p className="text-sm text-primary mb-3">{aviso}</p>}
 
       {Object.entries(SEGMENTOS).map(([segmento, etiqueta]) => {
         const suyos = plans.filter((p) => p.segment === segmento).sort((a, b) => a.tier - b.tier);

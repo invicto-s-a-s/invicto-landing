@@ -7,12 +7,16 @@ import PlanGates from "./PlanGates";
 import InterruptorVitrina from "./InterruptorVitrina";
 import AccountPicker from "./AccountPicker";
 import PlanDeLaCuenta from "./PlanDeLaCuenta";
+import AccesoTotal from "./AccesoTotal";
+import LicenciasExtra from "./LicenciasExtra";
 
 const VISTAS = [
   { value: "solicitudes", label: "Solicitudes" },
   { value: "asignar", label: "Asignar a mano" },
   { value: "catalogo", label: "Catálogo" },
   { value: "candados", label: "Candados" },
+  { value: "licencias", label: "Licencias extra" },
+  { value: "acceso", label: "Acceso total" },
 ] as const;
 
 type Vista = (typeof VISTAS)[number]["value"];
@@ -83,6 +87,8 @@ export default function PlansPanel() {
       {vista === "asignar" && <AsignarAMano />}
       {vista === "catalogo" && <PlanCatalog />}
       {vista === "candados" && <><InterruptorVitrina /><PlanGates /></>}
+      {vista === "licencias" && <LicenciasExtra />}
+      {vista === "acceso" && <AccesoTotal />}
     </div>
   );
 }
