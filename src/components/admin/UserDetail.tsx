@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PlanDeLaCuenta from "./PlanDeLaCuenta";
 
 interface Detail {
   user: {
@@ -63,8 +64,9 @@ function Field({ label, value }: { label: string; value: string }) {
  * propia obligaría a rehacer la búsqueda y la paginación en cada vuelta. Aquí
  * la lista sigue detrás, tal y como estaba.
  *
- * Es **solo lectura**, como el resto del panel. Cuanto menos pueda hacer, menos
- * daño hace que se filtre una sesión.
+ * Los datos son **solo lectura**: cuanto menos pueda hacer, menos daño hace que
+ * se filtre una sesión. Lo único que se cambia aquí es el plan de la cuenta (y,
+ * en un club, si es escuela o club), lo mismo que ya se hacía en Planes.
  */
 export default function UserDetail({ userId, onClose }: { userId: number; onClose: () => void }) {
   const [data, setData] = useState<Detail | null>(null);
@@ -135,6 +137,13 @@ export default function UserDetail({ userId, onClose }: { userId: number; onClos
                   <Field label="Siguiendo" value={String(u.following_count)} />
                 </div>
                 {u.bio && <p className="text-sm text-on-surface-variant mt-3 italic">«{u.bio}»</p>}
+              </section>
+
+              <section>
+                <h3 className="font-mono text-[10px] tracking-[0.25em] uppercase text-on-surface-variant mb-2">
+                  Plan
+                </h3>
+                <PlanDeLaCuenta key={u.id} userId={u.id} />
               </section>
 
               {data.perfil && (

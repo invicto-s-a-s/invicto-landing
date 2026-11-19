@@ -110,6 +110,23 @@ export default function EditorDelCatalogo({ edicion, abiertas, guardar, cerrar }
         {pie(`Encender ${p.name}`, () => void enviar(base, "PUT", { is_active: true }))}
       </>
     );
+  } else if (edicion.tipo === "privado") {
+    cuerpo = p.is_private ? (
+      <>
+        <p className="text-sm">¿Hacer público el plan {p.name}? Todas las cuentas de su perfil lo verán en la app y podrán solicitarlo.</p>
+        {pie("Hacerlo público", () => void enviar(base, "PUT", { is_private: false }))}
+      </>
+    ) : (
+      <>
+        <p className="text-sm">
+          ¿Hacer privado el plan {p.name}? Solo lo seguirán viendo las cuentas que ya lo tienen, como «Tu plan». Las demás dejarán de verlo y no podrán solicitarlo. Solo se asigna desde el panel.
+        </p>
+        {pie("Hacerlo privado", () => void enviar(base, "PUT", { is_private: true }))}
+      </>
+    );
+  } else if (edicion.tipo === "añadir") {
+    // Lo pinta `AnadirCapacidad`, que necesita el vocabulario entero.
+    return null;
   } else if (edicion.tipo === "quitar") {
     cuerpo = (
       <>

@@ -8,13 +8,27 @@ export interface Feature {
 export interface Plan {
   key: string; name: string; segment: string; kind: string; tier: number;
   is_default: boolean; is_active: boolean; prices: Price[]; features: Feature[];
+  /** A la medida de un cliente: solo lo ve quien lo tiene. Lo manda el servidor desde 2026-11-19. */
+  is_private?: boolean;
 }
+
+/** Cuántas cuentas tiene un plan. En el de entrada, `resto` son las que no tienen otro. */
+export interface Conteo { key: string; total: number; listadas: number; resto: number }
+
+/** Un plan que se le puede dar a una cuenta, de su escalera. */
+export interface PlanConcedible {
+  key: string; name: string; tier: number; kind: string; is_default: boolean; is_private: boolean;
+}
+
+export const SEGMENTOS: Record<string, string> = { player: "Jugador", scout: "Ojeador", club: "Club", school: "Escuela" };
 
 /** Lo que se está editando en el catálogo. Uno a la vez. */
 export type Edicion =
   | { tipo: "nombre"; plan: Plan }
   | { tipo: "precio"; plan: Plan }
   | { tipo: "encendido"; plan: Plan }
+  | { tipo: "privado"; plan: Plan }
+  | { tipo: "añadir"; plan: Plan }
   | { tipo: "capacidad"; plan: Plan; f: Feature }
   | { tipo: "quitar"; plan: Plan; f: Feature };
 
