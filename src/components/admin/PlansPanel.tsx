@@ -4,6 +4,7 @@ import { useState } from "react";
 import PlanRequests from "./PlanRequests";
 import PlanCatalog from "./PlanCatalog";
 import PlanGates from "./PlanGates";
+import InterruptorVitrina from "./InterruptorVitrina";
 import AccountPicker from "./AccountPicker";
 import PlanDeLaCuenta from "./PlanDeLaCuenta";
 
@@ -81,7 +82,7 @@ export default function PlansPanel() {
       {vista === "solicitudes" && <PlanRequests />}
       {vista === "asignar" && <AsignarAMano />}
       {vista === "catalogo" && <PlanCatalog />}
-      {vista === "candados" && <PlanGates />}
+      {vista === "candados" && <><InterruptorVitrina /><PlanGates /></>}
     </div>
   );
 }
