@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import EditorDelCatalogo from "./EditorDelCatalogo";
+import LineasDelPlan from "./LineasDelPlan";
 import { useCandadosAbiertos } from "./candados-abiertos";
 import { type Edicion, type Plan, estadoDe, pesos, valorDe } from "./catalogo-tipos";
 
@@ -20,13 +21,15 @@ const SEGMENTOS: Record<string, string> = { player: "Jugador", scout: "Ojeador",
  *
  * Lo que se puede tocar es lo que el servidor deja: el nombre y el encendido de
  * un plan, **añadir** un precio (los precios son históricos: no se editan, se
- * añade otro con su fecha) y el valor de cada capacidad. Cada cambio queda en
- * la auditoría con quién lo hizo.
+ * añade otro con su fecha), el valor de cada capacidad y las líneas que la
+ * tarjeta del plan enseña en la app. Cada cambio queda en la auditoría con
+ * quién lo hizo.
  */
 export default function PlanCatalog() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState<string | null>(null);
+  const [lineasDe, setLineasDe] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(() => {
@@ -94,6 +97,13 @@ export default function PlanCatalog() {
                     </button>
                     <button onClick={() => setEdicion({ tipo: "nombre", plan: p })} className="text-xs px-3 py-1.5 rounded-lg bg-[#1A1A1A]">Renombrar</button>
                     <button onClick={() => setEdicion({ tipo: "precio", plan: p })} className="text-xs px-3 py-1.5 rounded-lg bg-[#1A1A1A]">Añadir precio</button>
+                    <button
+                      onClick={() => setLineasDe(lineasDe === p.key ? null : p.key)}
+                      aria-expanded={lineasDe === p.key}
+                      className={`text-xs px-3 py-1.5 rounded-lg ${lineasDe === p.key ? "bg-neon text-background font-medium" : "bg-[#1A1A1A]"}`}
+                    >
+                      Lo que muestra la app
+                    </button>
                     {!p.is_default && (
                       <button onClick={() => setEdicion({ tipo: "encendido", plan: p })} className="text-xs px-3 py-1.5 rounded-lg border border-[#333]">
                         {p.is_active ? "Apagar" : "Encender"}
@@ -102,6 +112,8 @@ export default function PlanCatalog() {
                   </div>
 
                   {editorDe(p, false)}
+
+                  {lineasDe === p.key && <LineasDelPlan planKey={p.key} planName={p.name} />}
 
                   <div className="flex flex-wrap gap-2 mt-3">
                     {p.prices.length === 0 && <span className="text-xs text-on-surface-variant">Sin precios.</span>}

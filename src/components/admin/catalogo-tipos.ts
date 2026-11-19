@@ -18,6 +18,20 @@ export type Edicion =
   | { tipo: "capacidad"; plan: Plan; f: Feature }
   | { tipo: "quitar"; plan: Plan; f: Feature };
 
+/** Una línea de lo que el plan enseña en la app («destacados»). Es contenido, no permisos. */
+export interface Linea {
+  id: number; position: number; title: string; detail: string | null;
+  soon: boolean; includes_previous: boolean;
+}
+
+/** Lo que cabe en la tarjeta del plan. Lo mismo que exige el servidor. */
+export const TITULO_MAXIMO = 80;
+export const DETALLE_MAXIMO = 200;
+
+export const campo = "w-full bg-[#141414] border border-[#222] rounded-lg px-3 py-2 text-sm text-on-surface";
+export const boton = "text-xs px-4 py-2 rounded-lg disabled:opacity-40";
+export const chip = (on: boolean) => `text-xs px-3 py-1.5 rounded-lg ${on ? "bg-neon text-background font-medium" : "bg-[#1A1A1A] text-on-surface-variant"}`;
+
 export type Guardar = (url: string, method: "PUT" | "POST" | "DELETE", body?: unknown) => Promise<boolean>;
 
 export const pesos = (n: number) => `$${Math.round(n).toLocaleString("es-CO")}`;

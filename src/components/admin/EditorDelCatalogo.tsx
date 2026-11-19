@@ -1,11 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { type Edicion, type Guardar, estadoDe, hoyLocal, pesos, valorDe } from "./catalogo-tipos";
-
-const campo = "w-full bg-[#141414] border border-[#222] rounded-lg px-3 py-2 text-sm text-on-surface";
-const boton = "text-xs px-4 py-2 rounded-lg disabled:opacity-40";
-const chip = (on: boolean) => `text-xs px-3 py-1.5 rounded-lg ${on ? "bg-neon text-background font-medium" : "bg-[#1A1A1A] text-on-surface-variant"}`;
+import { type Edicion, type Guardar, boton, campo, chip, estadoDe, hoyLocal, pesos, valorDe } from "./catalogo-tipos";
 
 /**
  * Editar el catálogo dentro de la tarjeta del plan.
