@@ -30,6 +30,19 @@ const AVISO_PACK = "Tu Pack +25 ya está activo: tienes 25 cupos más para lleva
  * cada caso dice qué se escribe, y el de aprobar deja claro que el aviso a la
  * persona sale solo.
  */
+/** Los motivos de rechazo de siempre (humanización del panel, 2026-11-19). Se pueden ajustar antes de enviar. */
+const MOTIVOS = [
+  {
+    titulo: "Falta el correo del tutor",
+    texto: "Aún no has confirmado el correo electrónico de tu acudiente o tutor. Por favor, pídele que active el enlace "
+      + "de verificación en su correo y vuelve a enviar tu solicitud.",
+  },
+  {
+    titulo: "No se confirmó el pago",
+    texto: "No pudimos confirmar el pago. Escríbenos a soporte@invictoapp.com.co y lo revisamos contigo.",
+  },
+];
+
 export default function ResolverSolicitud({ username, planName, esPack, period, cobroHoy, busy, onResolver }: Props) {
   const [modo, setModo] = useState<"aprobar" | "rechazar" | null>(null);
   const [meses, setMeses] = useState(period === "year" ? 12 : 1);
@@ -64,6 +77,19 @@ export default function ResolverSolicitud({ username, planName, esPack, period, 
   if (modo === "rechazar") {
     return (
       <div className="grid gap-2 border-t border-[#222] pt-3">
+        <div className="flex flex-wrap gap-2">
+          {MOTIVOS.map((m) => (
+            <button
+              key={m.titulo}
+              type="button"
+              onClick={() => setMotivo(m.texto)}
+              disabled={busy}
+              className="text-[11px] px-3 py-1.5 rounded-lg border border-[#333] text-on-surface-variant hover:border-neon"
+            >
+              {m.titulo}
+            </button>
+          ))}
+        </div>
         <label className="grid gap-1 text-xs text-on-surface-variant">
           Qué va a leer @{username} en la app, tal cual (por qué no se activó y qué puede hacer)
           <textarea
