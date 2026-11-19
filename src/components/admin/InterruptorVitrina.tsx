@@ -22,15 +22,15 @@ export default function InterruptorVitrina() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const cargar = useCallback(async () => {
-    const r = await llamarPanel<{ value: string }>(RUTA);
-    if (!r.ok || typeof r.data?.value !== "string") {
-      setError(r.message ?? "No se pudo leer si la Vitrina Élite está encendida.");
-      return null;
-    }
-    setActiva(encendida(r.data.value));
-    return encendida(r.data.value);
-  }, []);
+  // Con `.then`, como `PlanGates`: el estado cambia cuando responde el servidor, no dentro del efecto.
+  const cargar = useCallback(() =>
+    llamarPanel<{ value: string }>(RUTA).then((r) => {
+      if (!r.ok || typeof r.data?.value !== "string") {
+        setError(r.message ?? "No se pudo leer si la Vitrina Élite está encendida.");
+        return;
+      }
+      setActiva(encendida(r.data.value));
+    }), []);
 
   useEffect(() => { void cargar(); }, [cargar]);
 
