@@ -36,11 +36,11 @@ export default function FunnelBars({ steps }: { steps: FunnelStep[] }) {
               <p className="text-[11px] text-on-surface-variant py-1.5 pl-1">
                 {perdidos > 0 ? (
                   <>
-                    <span className="text-[#FF8A6B]">−{perdidos.toLocaleString("es-CO")}</span>{" "}
-                    se quedaron aquí
+                    <span className="text-[#FF8A6B]">{perdidos.toLocaleString("es-CO")}</span>{" "}
+                    {perdidos === 1 ? "usuario abandonó en este paso" : "usuarios abandonaron en este paso"}
                   </>
                 ) : (
-                  "Nadie se quedó aquí"
+                  "Todos completaron este paso"
                 )}
               </p>
             )}

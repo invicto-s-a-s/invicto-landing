@@ -34,6 +34,13 @@ const DOC_LABEL: Record<string, string> = {
   other: "Otro documento",
 };
 
+/** El motivo de siempre para un ojeador (humanización del panel, 2026-11-19). Se puede cambiar antes de enviar. */
+const MOTIVO_OJEADOR =
+  "Hola, gracias por postularte como ojeador en INVICTO. Para aprobar tu verificación y garantizar la seguridad de los "
+  + "jugadores, necesitamos que adjuntes una foto nítida y legible de tu documento de identidad (por ambas caras) o de tu "
+  + "carnet o acreditación profesional vigente que te respalde como scout o entrenador. Por favor, actualiza los soportes "
+  + "en tu perfil y vuelve a enviar la solicitud.";
+
 /**
  * La misma bandeja que hay en la app, pero aquí los documentos se abren en una
  * pestaña a tamaño completo — que es como se mira de verdad una cédula.
@@ -59,9 +66,16 @@ export default function VerificationsTable() {
     let note: string | null = null;
     if (!approved) {
       // El motivo es obligatorio: quien lo recibe tiene que saber qué corregir.
-      note = prompt(`¿Qué falta en la verificación de ${req.display_name}?`);
+      note = prompt(
+        `Motivo del rechazo para ${req.display_name}\n\nEste mensaje se enviará al usuario para que corrija su solicitud:`,
+        req.kind === "scout" ? MOTIVO_OJEADOR : "",
+      );
       if (!note?.trim()) return;
-    } else if (!confirm(`Verificar a ${req.display_name}?\n\nLlevará la insignia y podrá escribirle a jugadores menores de edad.`)) {
+    } else if (!confirm(
+      `Confirmar verificación de ${req.display_name}\n\n`
+      + `Recibirá la insignia oficial de ${req.kind === "scout" ? "Ojeador Verificado" : "Club Verificado"} y quedará `
+      + "habilitado para contactar jugadores, incluidos menores de edad, bajo las políticas de seguridad.\n\n¿Deseas continuar?",
+    )) {
       return;
     }
 

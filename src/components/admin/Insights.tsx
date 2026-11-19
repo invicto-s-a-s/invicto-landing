@@ -76,28 +76,28 @@ export default function Insights() {
   return (
     <div className="flex flex-col gap-10">
       <section className="admin-card-solid border border-[#222] rounded-xl p-5">
-        <h2 className="text-sm mb-1">Vuelven</h2>
+        <h2 className="text-sm mb-1">Retención de usuarios</h2>
         <p className="text-xs text-on-surface-variant mb-4">
-          De los que se registraron hace al menos ese tiempo, cuántos hicieron algo
-          pasado su primer día.
+          Porcentaje de usuarios registrados que regresaron y tuvieron actividad después
+          de su primer día.
         </p>
         <Retention points={data.retencion} />
       </section>
 
       <section className="admin-card-solid border border-[#222] rounded-xl p-5">
-        <h2 className="text-sm mb-1">Gente activa por día</h2>
+        <h2 className="text-sm mb-1">Usuarios activos diarios (últimos 30 días)</h2>
         <p className="text-xs text-on-surface-variant mb-4">
-          Personas distintas, últimos 30 días. No acciones: cien likes de una cuenta no
-          son un día activo.
+          Usuarios únicos que interactuaron cada día. Se cuenta una vez por usuario, sin
+          importar cuántas acciones realice.
         </p>
-        <AreaChart data={data.actividad_por_dia} color={SOLO} label="Personas activas" />
+        <AreaChart data={data.actividad_por_dia} color={SOLO} label="Usuarios activos" />
       </section>
 
       <section className="admin-card-solid border border-[#222] rounded-xl p-5">
-        <h2 className="text-sm mb-1">Embudo del registro</h2>
+        <h2 className="text-sm mb-1">Embudo de registro (últimos 90 días)</h2>
         <p className="text-xs text-on-surface-variant mb-4">
-          Últimos 90 días. Mide el registro de ahora, no el de cuando la verificación de
-          correo todavía no existía.
+          Muestra el avance de los nuevos usuarios desde su registro hasta completar su
+          perfil, con el flujo actual de verificación de correo.
         </p>
         <FunnelBars steps={data.embudo} />
       </section>

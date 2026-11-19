@@ -12,7 +12,7 @@ import LicenciasExtra from "./LicenciasExtra";
 
 const VISTAS = [
   { value: "solicitudes", label: "Solicitudes" },
-  { value: "asignar", label: "Asignar a mano" },
+  { value: "asignar", label: "Asignación manual" },
   { value: "catalogo", label: "Catálogo" },
   { value: "candados", label: "Candados" },
   { value: "licencias", label: "Licencias extra" },

@@ -71,7 +71,7 @@ export default function CuentasDelPlan({ plan, onAbrirCuenta, onCambio }: Props)
       </p>
       {aviso && <p className="text-xs text-neon">{aviso}</p>}
       {data.listadas === 0 && data.resto === 0 && (
-        <p className="text-xs text-on-surface-variant">Aún no hay cuentas con este plan. Puedes asignarlo desde «Asignar a mano» o desde la ficha de una cuenta.</p>
+        <p className="text-xs text-on-surface-variant">Aún no hay cuentas con este plan. Puedes asignarlo desde «Asignación manual» o desde la ficha de una cuenta.</p>
       )}
 
       <ul className="grid gap-1.5">

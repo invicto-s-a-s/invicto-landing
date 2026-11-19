@@ -20,6 +20,11 @@ export interface AdminStats {
 }
 
 const nice = (k: string) => k.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+
+/** Los nombres que el servidor manda como clave, dichos para quien lee el panel. */
+const NOMBRES_GENERALES: Record<string, string> = { nuevas_7d: "Nuevas (7 días)", nuevas_30d: "Nuevas (30 días)" };
+const NOMBRES_CUENTAS: Record<string, string> = { total: "Total registradas", con_push: "Con notificaciones activas" };
+const NOMBRES_OJEO: Record<string, string> = { borradores: "Evaluaciones en borrador", partidos_vistos: "Partidos analizados" };
 const num = (v: number) => v.toLocaleString("es-CO");
 
 /** La cifra que abre el panel. Grande porque es la que se mira primero. */
@@ -43,7 +48,7 @@ function Hero({ value, label, hint }: { value: number; label: string; hint?: str
  * Las fichas de dentro se separan con un velo claro en vez de otra superficie
  * opaca, para que el fondo siga asomando entre bloques.
  */
-function Section({ title, block }: { title: string; block: Block }) {
+function Section({ title, block, nombres = {} }: { title: string; block: Block; nombres?: Record<string, string> }) {
   return (
     <section className="admin-card border border-[#1F1F1F] rounded-xl p-5">
       <h2 className="font-mono text-[10px] tracking-[0.25em] uppercase text-on-surface-variant mb-4">
@@ -55,7 +60,7 @@ function Section({ title, block }: { title: string; block: Block }) {
             <p className="font-headline font-black italic text-xl leading-none tabular-nums">
               {num(v)}
             </p>
-            <p className="text-[11px] text-on-surface-variant mt-1.5 leading-tight">{nice(k)}</p>
+            <p className="text-[11px] text-on-surface-variant mt-1.5 leading-tight">{nombres[k] ?? NOMBRES_GENERALES[k] ?? nice(k)}</p>
           </div>
         ))}
       </div>
@@ -80,7 +85,7 @@ export default function Dashboard({ stats }: { stats: AdminStats }) {
         <Hero
           value={cuentas.perfiles_completos}
           label="Perfiles completos"
-          hint={aMedias > 0 ? `${num(aMedias)} se quedaron a medias` : "Ninguno a medias"}
+          hint={aMedias > 0 ? `${num(aMedias)} perfiles incompletos` : "Ningún perfil incompleto"}
         />
         <Hero
           value={stats.contenido.publicaciones}
@@ -89,8 +94,8 @@ export default function Dashboard({ stats }: { stats: AdminStats }) {
         />
         <Hero
           value={cuentas.verificaciones_pendientes}
-          label="Por verificar"
-          hint={cuentas.verificaciones_pendientes > 0 ? "Esperando revisión" : "Nada pendiente"}
+          label="Pendientes de verificación"
+          hint={cuentas.verificaciones_pendientes > 0 ? "En espera de revisión" : "Nada pendiente"}
         />
       </div>
 
@@ -112,12 +117,12 @@ export default function Dashboard({ stats }: { stats: AdminStats }) {
           <h2 className="text-sm mb-4">Cuentas por tipo</h2>
           <RoleBars rows={stats.users_by_role} />
         </div>
-        <Section title="Cuentas" block={cuentas} />
+        <Section title="Cuentas" block={cuentas} nombres={NOMBRES_CUENTAS} />
       </div>
 
       <Section title="Contenido" block={stats.contenido} />
       <Section title="Interacción" block={stats.interaccion} />
-      <Section title="Ojeo y evaluaciones" block={stats.ojeo} />
+      <Section title="Scouting y evaluaciones" block={stats.ojeo} nombres={NOMBRES_OJEO} />
       <Section title="Convocatorias" block={stats.convocatorias} />
       <Section title="Partidos de club" block={stats.partidos} />
       <Section title="Red" block={stats.red} />

@@ -124,11 +124,11 @@ export default function PlanRequests({ onChange }: { onChange?: () => void }) {
             </div>
 
             <p className="text-sm mb-1">
-              Pide <span className="text-neon font-medium">{req.plan_name}</span>{" "}
+              Solicita: <span className="text-neon font-medium">Plan {req.plan_name}</span>{" "}
               <span className="text-on-surface-variant">
-                ({req.plan_key} · {req.plan_kind === "addon"
+                ({req.plan_kind === "addon"
                   ? "complemento, vence con su plan"
-                  : req.period === "year" ? "anual" : "mensual"})
+                  : req.period === "year" ? "suscripción anual" : "suscripción mensual"})
               </span>
             </p>
             <p className="text-xs text-on-surface-variant mb-3">
@@ -145,7 +145,11 @@ export default function PlanRequests({ onChange }: { onChange?: () => void }) {
             )}
 
             {req.note && <p className="text-xs text-on-surface-variant italic mb-3">«{req.note}»</p>}
-            {req.resolution_note && <p className="text-xs text-on-surface-variant mb-3">Respuesta: {req.resolution_note}</p>}
+            {req.resolution_note && (
+              <p className="text-xs text-on-surface-variant mb-3">
+                {req.status === "rejected" ? "Motivo del rechazo" : "Nota"}: {req.resolution_note}
+              </p>
+            )}
 
             {req.status === "pending" && (
               <ResolverSolicitud

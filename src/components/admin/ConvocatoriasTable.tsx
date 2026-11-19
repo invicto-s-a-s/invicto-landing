@@ -128,7 +128,7 @@ export default function ConvocatoriasTable() {
             {!loading && rows.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-4 py-10 text-center text-on-surface-variant">
-                  No hay convocatorias con ese estado.
+                  Aún no hay convocatorias registradas bajo este filtro.
                 </td>
               </tr>
             )}
