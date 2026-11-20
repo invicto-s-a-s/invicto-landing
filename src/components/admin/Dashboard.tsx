@@ -24,7 +24,11 @@ const nice = (k: string) => k.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpper
 /** Los nombres que el servidor manda como clave, dichos para quien lee el panel. */
 const NOMBRES_GENERALES: Record<string, string> = { nuevas_7d: "Nuevas (7 días)", nuevas_30d: "Nuevas (30 días)" };
 const NOMBRES_CUENTAS: Record<string, string> = { total: "Total registradas", con_push: "Con notificaciones activas" };
-const NOMBRES_OJEO: Record<string, string> = { borradores: "Evaluaciones en borrador", partidos_vistos: "Partidos analizados" };
+const NOMBRES_OJEO: Record<string, string> = {
+  evaluaciones: "Evaluaciones totales", finalizadas: "Evaluaciones finalizadas", borradores: "Evaluaciones en borrador",
+  jugadores_evaluados: "Jugadores evaluados", ojeadores_activos: "Ojeadores activos", jugadores_observados: "Jugadores observados",
+  partidos_vistos: "Partidos analizados", busquedas_guardadas: "Búsquedas guardadas",
+};
 const num = (v: number) => v.toLocaleString("es-CO");
 
 /** La cifra que abre el panel. Grande porque es la que se mira primero. */
@@ -122,7 +126,7 @@ export default function Dashboard({ stats }: { stats: AdminStats }) {
 
       <Section title="Contenido" block={stats.contenido} />
       <Section title="Interacción" block={stats.interaccion} />
-      <Section title="Scouting y evaluaciones" block={stats.ojeo} nombres={NOMBRES_OJEO} />
+      <Section title="Scouting y Evaluaciones" block={stats.ojeo} nombres={NOMBRES_OJEO} />
       <Section title="Convocatorias" block={stats.convocatorias} />
       <Section title="Partidos de club" block={stats.partidos} />
       <Section title="Red" block={stats.red} />

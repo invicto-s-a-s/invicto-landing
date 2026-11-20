@@ -32,6 +32,13 @@ interface PlanRequest {
 const pesos = (n: number) => `$${n.toLocaleString("es-CO")}`;
 const fecha = (iso: string) => new Date(iso).toLocaleDateString("es-CO");
 
+/** «Plan Élite Jugador», «Plan Semilla Escuela»: a quién es el plan, por el prefijo de su clave (humanización del panel). */
+const SEGMENTO: Record<string, string> = { player: "Jugador", scout: "Ojeador", school: "Escuela", club: "Club" };
+const segmentoDe = (planKey: string) => {
+  const s = SEGMENTO[planKey.split("_")[0]];
+  return s ? ` ${s}` : "";
+};
+
 const TABS = [
   { value: "pending", label: "Pendientes" },
   { value: "approved", label: "Aprobadas" },
@@ -124,11 +131,11 @@ export default function PlanRequests({ onChange }: { onChange?: () => void }) {
             </div>
 
             <p className="text-sm mb-1">
-              Solicita: <span className="text-neon font-medium">Plan {req.plan_name}</span>{" "}
+              Solicita: <span className="text-neon font-medium">Plan {req.plan_name}{segmentoDe(req.plan_key)}</span>{" "}
               <span className="text-on-surface-variant">
                 ({req.plan_kind === "addon"
-                  ? "complemento, vence con su plan"
-                  : req.period === "year" ? "suscripción anual" : "suscripción mensual"})
+                  ? "Complemento, vence con su plan"
+                  : req.period === "year" ? "Suscripción Anual" : "Suscripción Mensual"})
               </span>
             </p>
             <p className="text-xs text-on-surface-variant mb-3">

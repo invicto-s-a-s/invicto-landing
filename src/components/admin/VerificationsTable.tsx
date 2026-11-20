@@ -67,7 +67,7 @@ export default function VerificationsTable() {
     if (!approved) {
       // El motivo es obligatorio: quien lo recibe tiene que saber qué corregir.
       note = prompt(
-        `Motivo del rechazo para ${req.display_name}\n\nEste mensaje se enviará al usuario para que corrija su solicitud:`,
+        `Motivo del rechazo para ${req.display_name}\n\nEste mensaje será enviado al usuario para que corrija su solicitud:`,
         req.kind === "scout" ? MOTIVO_OJEADOR : "",
       );
       if (!note?.trim()) return;
@@ -110,7 +110,7 @@ export default function VerificationsTable() {
 
       {!loading && rows.length === 0 && (
         <div className="border border-[#222] rounded-xl px-4 py-12 text-center text-on-surface-variant text-sm">
-          {tab === "review" ? "No hay nada esperando revisión." : "Nada por aquí."}
+          {tab === "review" ? "No hay solicitudes en espera de revisión." : "Nada por aquí."}
         </div>
       )}
 

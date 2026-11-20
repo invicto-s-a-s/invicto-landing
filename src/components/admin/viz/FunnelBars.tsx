@@ -20,6 +20,12 @@ export interface FunnelStep {
  * sino **dónde se cae la gente**. Por eso la pérdida va escrita entre barra y
  * barra, y no hay que restar de cabeza.
  */
+/** Los pasos llegan del servidor sin tildes; aquí se leen como frase (humanización del panel, 2026-11-20). */
+const NOMBRE_DEL_PASO: Record<string, string> = {
+  "Se registro": "Se registró", "Verifico el correo": "Verificó su correo",
+  "Eligio rol": "Eligió su rol", "Completo el perfil": "Completó su perfil",
+};
+
 export default function FunnelBars({ steps }: { steps: FunnelStep[] }) {
   if (steps.length === 0) return null;
   const max = Math.max(1, steps[0].total);
@@ -37,7 +43,9 @@ export default function FunnelBars({ steps }: { steps: FunnelStep[] }) {
                 {perdidos > 0 ? (
                   <>
                     <span className="text-[#FF8A6B]">{perdidos.toLocaleString("es-CO")}</span>{" "}
-                    {perdidos === 1 ? "usuario abandonó en este paso" : "usuarios abandonaron en este paso"}
+                    {i === steps.length - 1
+                      ? (perdidos === 1 ? "usuario pendiente por completar perfil" : "usuarios pendientes por completar perfil")
+                      : (perdidos === 1 ? "usuario abandonó en este paso" : "usuarios abandonaron en este paso")}
                   </>
                 ) : (
                   "Todos completaron este paso"
@@ -46,7 +54,7 @@ export default function FunnelBars({ steps }: { steps: FunnelStep[] }) {
             )}
 
             <div className="flex items-baseline justify-between mb-1.5">
-              <span className="text-sm">{s.paso}</span>
+              <span className="text-sm">{NOMBRE_DEL_PASO[s.paso] ?? s.paso}</span>
               <span className="text-sm tabular-nums">
                 {s.total.toLocaleString("es-CO")}
                 <span className="text-on-surface-variant text-xs ml-2">{s.pct}%</span>
