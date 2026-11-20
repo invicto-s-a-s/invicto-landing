@@ -86,6 +86,7 @@ export default async function CitacionPage({ params }: { params: Promise<{ token
           campo="answer" valorSi="going" valorNo="cant" si="Confirmar asistencia" no="No podrá asistir"
           inicial={c.respuesta === "going" ? "si" : c.respuesta === "cant" ? "no" : null}
           cambiable
+          sinTitulo
           graciasSi={`Listo: la escuela ya tiene registrada la asistencia de ${c.jugador}. Si cambia algo, puedes actualizar tu respuesta aquí mismo.`}
           graciasNo={`Listo: la escuela ya sabe que ${c.jugador} no podrá asistir. Si cambia algo, puedes actualizar tu respuesta aquí mismo.`}
         />

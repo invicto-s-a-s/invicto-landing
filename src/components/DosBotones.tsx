@@ -15,7 +15,7 @@ const NEON = "#AAFF00";
  * servidor y una función no cruza a un componente de cliente (daba 500).
  */
 export default function DosBotones({
-  ruta, si, no, campo, valorSi, valorNo, inicial, cambiable, graciasSi, graciasNo,
+  ruta, si, no, campo, valorSi, valorNo, inicial, cambiable, graciasSi, graciasNo, sinTitulo = false,
 }: {
   ruta: string;
   si: string;
@@ -27,6 +27,8 @@ export default function DosBotones({
   cambiable: boolean;
   graciasSi: string;
   graciasNo: string;
+  /** Sin el «Gracias» de arriba, cuando el mensaje ya empieza con su propio «Listo:» (citación, 2026-11-20). */
+  sinTitulo?: boolean;
 }) {
   const [respuesta, setRespuesta] = useState<"si" | "no" | null>(inicial);
   const [enviando, setEnviando] = useState<"si" | "no" | null>(null);
@@ -58,8 +60,8 @@ export default function DosBotones({
     <div>
       {respuesta && (
         <div style={{ ...caja, borderColor: NEON, marginBottom: 18 }}>
-          <p style={{ margin: 0, fontWeight: 600, color: "#F0F0F0" }}>Gracias</p>
-          <p style={{ margin: "8px 0 0", color: "#AAAAAA", fontSize: 14, lineHeight: 1.6 }}>{respuesta === "si" ? graciasSi : graciasNo}</p>
+          {!sinTitulo && <p style={{ margin: 0, fontWeight: 600, color: "#F0F0F0" }}>Gracias</p>}
+          <p style={{ margin: sinTitulo ? 0 : "8px 0 0", color: sinTitulo ? "#F0F0F0" : "#AAAAAA", fontSize: 14, lineHeight: 1.6 }}>{respuesta === "si" ? graciasSi : graciasNo}</p>
         </div>
       )}
       {!cerrado && (
