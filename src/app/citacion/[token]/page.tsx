@@ -64,9 +64,9 @@ export default async function CitacionPage({ params }: { params: Promise<{ token
           {c.rival ? `Contra ${c.rival}` : "Partido"}
         </p>
         <p style={linea}>{diaLargo(c.dia)}</p>
-        <p style={linea}>Llegar a las {c.cita} · el partido empieza a las {c.partido}</p>
+        <p style={linea}>Llegada (citación): {c.cita} · Pitazo inicial: {c.partido}</p>
         {c.lugar && <p style={linea}>{c.lugar}</p>}
-        {c.nota && <p style={{ ...linea, color: "#D0D0D0" }}>{c.nota}</p>}
+        {c.nota && <p style={{ ...linea, color: "#D0D0D0" }}>Qué llevar: {c.nota}</p>}
       </div>
 
       {c.telefono ? (
@@ -81,11 +81,11 @@ export default async function CitacionPage({ params }: { params: Promise<{ token
       {c.abierta ? (
         <DosBotones
           ruta={`/api/citacion/${encodeURIComponent(token)}`}
-          campo="answer" valorSi="going" valorNo="cant" si="Va" no="No puede"
+          campo="answer" valorSi="going" valorNo="cant" si="Asistirá" no="No asistirá"
           inicial={c.respuesta === "going" ? "si" : c.respuesta === "cant" ? "no" : null}
           cambiable
-          graciasSi={`La escuela ya sabe que ${c.jugador} va. Si algo cambia, puedes responder aquí mismo.`}
-          graciasNo={`La escuela ya sabe que ${c.jugador} no puede ir. Si algo cambia, puedes responder aquí mismo.`}
+          graciasSi={`La escuela ya sabe que ${c.jugador} asistirá. Si algo cambia, puedes responder aquí mismo.`}
+          graciasNo={`La escuela ya sabe que ${c.jugador} no asistirá. Si algo cambia, puedes responder aquí mismo.`}
         />
       ) : (
         <p style={parrafo}>
