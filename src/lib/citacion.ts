@@ -9,6 +9,8 @@ export interface Citacion {
   /** El primer nombre, para «¿Iham asistirá?». */
   jugador_nombre?: string | null;
   escuela: string | null;
+  /** «Sede Norte», si la citación es de una sede. Un servidor de antes no la manda. */
+  sede?: string | null;
   rival: string | null;
   dia: string;
   cita: string;
@@ -35,6 +37,12 @@ const deFrase = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
 /** `2026-11-28` → «Sábado, 28 de noviembre». */
 export const diaDeFrase = (dia: string) =>
   deFrase(new Date(`${dia}T12:00:00`).toLocaleDateString("es-CO", { weekday: "long", day: "numeric", month: "long" }));
+
+/** «Barranquillita FC · Sede Norte», o la escuela sola. */
+export function escuelaDeLaCitacion(c: Pick<Citacion, "escuela" | "sede">): string {
+  const escuela = c.escuela ?? "La escuela";
+  return c.sede ? `${escuela} · ${c.sede}` : escuela;
+}
 
 /** El título de la tarjeta. Una práctica interna no dice «Partido vs.». */
 export const tituloDelPartido = (c: Citacion) =>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import DosBotones from "@/components/DosBotones";
 import { MarcoDeEnlace } from "@/components/MarcoDeEnlace";
-import { type Citacion, comoLlegar, etiquetaDelPartido, filasDeLaTarjeta, tituloDelPartido } from "@/lib/citacion";
+import { type Citacion, comoLlegar, escuelaDeLaCitacion, etiquetaDelPartido, filasDeLaTarjeta, tituloDelPartido } from "@/lib/citacion";
 import { leerEnlace } from "@/lib/enlace-del-acudiente";
 
 /**
@@ -38,7 +38,7 @@ export default async function CitacionPage({ params }: { params: Promise<{ token
     );
   }
 
-  const escuela = c.escuela ?? "La escuela";
+  const escuela = escuelaDeLaCitacion(c);
   const nombre = c.jugador_nombre ?? c.jugador;
   const etiqueta = etiquetaDelPartido(c);
   const mapa = comoLlegar(c);
