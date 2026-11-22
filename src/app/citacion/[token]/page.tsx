@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import DosBotones from "@/components/DosBotones";
 import { MarcoDeEnlace } from "@/components/MarcoDeEnlace";
+import { type Citacion, comoLlegar, etiquetaDelPartido, filasDeLaTarjeta, tituloDelPartido } from "@/lib/citacion";
 import { leerEnlace } from "@/lib/enlace-del-acudiente";
 
 /**
@@ -12,30 +13,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false, nocache: true },
 };
 
-interface Citacion {
-  jugador: string;
-  escuela: string | null;
-  rival: string | null;
-  dia: string;
-  cita: string;
-  partido: string;
-  lugar: string | null;
-  nota: string | null;
-  telefono: string | null;
-  respuesta: "going" | "cant" | null;
-  /** «Partido amistoso», «Partido de liga»…; null en citaciones de antes de la modalidad. */
-  modalidad: string | null;
-  cancelada: boolean;
-  abierta: boolean;
-}
-
-const diaLargo = (dia: string) =>
-  new Date(`${dia}T12:00:00`).toLocaleDateString("es-CO", { weekday: "long", day: "numeric", month: "long" });
-
 /**
- * Donde el acudiente ve la convocatoria de su hijo a un partido y responde
- * «Confirmar asistencia» o «No podrá asistir», sin cuenta. El orden es el que le sirve: qué partido, cuándo y
- * dónde, a quién llamar, y al final los botones.
+ * Donde el acudiente ve la citación de su hijo a un partido y responde
+ * «Confirmar asistencia» o «No podrá asistir», sin cuenta (ficha p13 de
+ * Alexander, 2026-11-22). El orden es el que le sirve: qué partido, cuándo y
+ * dónde, a quién escribirle, y al final la pregunta y los botones.
+ *
+ * **Sin pronombres**: «Avisamos a la escuela que Iham asistirá», nunca «él» o
+ * «ella». El nombre no equivoca el género.
  */
 export default async function CitacionPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
@@ -54,59 +39,85 @@ export default async function CitacionPage({ params }: { params: Promise<{ token
   }
 
   const escuela = c.escuela ?? "La escuela";
+  const nombre = c.jugador_nombre ?? c.jugador;
+  const etiqueta = etiquetaDelPartido(c);
+  const mapa = comoLlegar(c);
+
   return (
     <MarcoDeEnlace>
-      <p style={{ ...parrafo, marginTop: 0, color: "#AAAAAA" }}>Invicto</p>
+      <p style={{ ...parrafo, marginTop: 0, color: "#AAAAAA", letterSpacing: 1 }}>INVICTO</p>
+      {etiqueta && !c.cancelada && (
+        <p style={{ margin: "0 0 12px" }}>
+          <span style={chip}>{etiqueta.tipo}</span>
+          {etiqueta.detalle && <span style={{ ...linea, marginLeft: 10 }}>{etiqueta.detalle}</span>}
+        </p>
+      )}
       <h1 style={titulo}>
-        {c.cancelada ? `Se canceló la citación de ${c.jugador}` : `${escuela} convocó a ${c.jugador} a un partido`}
+        {c.cancelada ? `Se canceló la citación de ${c.jugador}` : `${escuela} cita a ${c.jugador} para un partido`}
       </h1>
-
-      <div style={tarjeta}>
-        <p style={{ margin: 0, fontSize: 17, fontWeight: 600, color: "#F0F0F0" }}>
-          {[c.modalidad, c.rival && `Contra ${c.rival}`].filter(Boolean).join(" · ") || "Partido"}
+      {!c.cancelada && c.abierta && (
+        <p style={{ ...parrafo, marginTop: 0 }}>
+          <strong style={{ color: "#AAFF00" }}>Aquí puedes:</strong> confirmar si {nombre} asistirá o avisar que no podrá.
         </p>
-        <p style={linea}>{diaLargo(c.dia)}</p>
-        <p style={linea}>Llegada: {c.cita} · Inicio del partido: {c.partido}</p>
-        {c.lugar && <p style={linea}>{c.lugar}</p>}
-        {c.nota && <p style={{ ...linea, color: "#D0D0D0" }}>Qué llevar: {c.nota}</p>}
-      </div>
-
-      {c.telefono ? (
-        <p style={{ ...parrafo, fontSize: 16 }}>
-          Si tienes dudas, llama a la escuela:{" "}
-          <a href={`tel:${c.telefono}`} style={enlace}>{c.telefono}</a>
-        </p>
-      ) : (
-        <p style={parrafo}>Si tienes dudas, comunícate directamente con la escuela.</p>
       )}
 
+      <div style={tarjeta}>
+        <p style={{ margin: 0, fontSize: 17, fontWeight: 600, color: "#F0F0F0" }}>{tituloDelPartido(c)}</p>
+        {filasDeLaTarjeta(c).map(([k, v]) => (
+          <p key={k} style={linea}><span style={{ color: "#888888" }}>{k}:</span> {v}</p>
+        ))}
+        {mapa && (
+          <a href={mapa} target="_blank" rel="noopener noreferrer" style={boton}>Cómo llegar</a>
+        )}
+      </div>
+
+      <p style={{ ...parrafo, fontSize: 16 }}>
+        ¿Dudas? Escríbele directamente a la escuela.
+        {c.telefono && (
+          <>
+            {" "}<a href={`tel:${c.telefono}`} style={enlace}>{c.telefono}</a>
+          </>
+        )}
+      </p>
+
       {c.abierta ? (
-        <DosBotones
-          ruta={`/api/citacion/${encodeURIComponent(token)}`}
-          campo="answer" valorSi="going" valorNo="cant" si="Confirmar asistencia" no="No podrá asistir"
-          inicial={c.respuesta === "going" ? "si" : c.respuesta === "cant" ? "no" : null}
-          cambiable
-          sinTitulo
-          graciasSi={`Listo: la escuela ya tiene registrada la asistencia de ${c.jugador}. Si cambia algo, puedes actualizar tu respuesta aquí mismo.`}
-          graciasNo={`Listo: la escuela ya sabe que ${c.jugador} no podrá asistir. Si cambia algo, puedes actualizar tu respuesta aquí mismo.`}
-        />
+        <>
+          <p style={{ margin: "24px 0 10px", fontSize: 18, fontWeight: 600, color: "#F0F0F0" }}>¿{nombre} asistirá?</p>
+          <DosBotones
+            ruta={`/api/citacion/${encodeURIComponent(token)}`}
+            campo="answer" valorSi="going" valorNo="cant" si="Confirmar asistencia" no="No podrá asistir"
+            inicial={c.respuesta === "going" ? "si" : c.respuesta === "cant" ? "no" : null}
+            cambiable
+            sinTitulo
+            graciasSi={`Gracias por confirmar. Avisamos a la escuela que ${nombre} asistirá. Si cambia el plan, puedes actualizar tu respuesta aquí.`}
+            graciasNo={`Gracias por avisar. La escuela ya sabe que ${nombre} no podrá asistir. Si cambia el plan, puedes actualizar tu respuesta aquí.`}
+          />
+        </>
       ) : (
         <p style={parrafo}>
           {c.cancelada
             ? "No hace falta que respondas."
-            : "Esta citación ya no recibe respuestas. Si necesitas avisar algo, comunícate con la escuela."}
+            : "Esta citación ya no recibe respuestas. Si necesitas avisar algo, escríbele directamente a la escuela."}
         </p>
       )}
 
       <p style={{ ...parrafo, color: "#999999", fontSize: 13, marginTop: 28 }}>
-        Invicto muestra la información registrada por la escuela. Cualquier cambio en la convocatoria es definido por el club.
+        INVICTO solo muestra lo que registra la escuela. La citación y sus cambios los decide ella.
       </p>
     </MarcoDeEnlace>
   );
 }
 
-const titulo: React.CSSProperties = { fontSize: 27, lineHeight: 1.25, margin: "0 0 20px", color: "#F0F0F0" };
+const titulo: React.CSSProperties = { fontSize: 27, lineHeight: 1.25, margin: "0 0 14px", color: "#F0F0F0" };
 const parrafo: React.CSSProperties = { fontSize: 15, lineHeight: 1.7, color: "#D0D0D0", margin: "20px 0" };
 const tarjeta: React.CSSProperties = { border: "1px solid #AAFF00", borderRadius: 12, padding: "18px 20px", background: "rgb(20 20 20 / 0.70)" };
-const linea: React.CSSProperties = { margin: "6px 0 0", fontSize: 14, color: "#AAAAAA", lineHeight: 1.6 };
+const linea: React.CSSProperties = { margin: "6px 0 0", fontSize: 14, color: "#D0D0D0", lineHeight: 1.6 };
 const enlace: React.CSSProperties = { color: "#AAFF00", fontWeight: 600, whiteSpace: "nowrap" };
+const chip: React.CSSProperties = {
+  display: "inline-block", padding: "3px 10px", borderRadius: 999, background: "#AAFF00", color: "#111111",
+  fontSize: 12, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
+};
+const boton: React.CSSProperties = {
+  display: "inline-block", marginTop: 14, padding: "10px 16px", borderRadius: 10, border: "1px solid #AAFF00",
+  color: "#AAFF00", fontWeight: 600, fontSize: 14, textDecoration: "none",
+};
