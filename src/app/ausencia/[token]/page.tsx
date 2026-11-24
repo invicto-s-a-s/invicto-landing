@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { MarcoDeEnlace } from "@/components/MarcoDeEnlace";
-import ReasonForm from "./ReasonForm";
+import { PieDeFamilia } from "@/components/PieDeFamilia";
+import ReasonForm, { type Motivo } from "./ReasonForm";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://api.invictoapp.com";
 
@@ -22,6 +23,9 @@ interface Aviso {
   categoria: string | null;
   telefono: string | null;
   motivos: string[];
+  /** La lista de la escuela. Un servidor anterior no la manda. */
+  opciones?: Motivo[];
+  texto_libre?: boolean;
 }
 
 async function cargar(token: string): Promise<Aviso | null> {
@@ -117,12 +121,13 @@ export default async function AusenciaPage({ params }: Props) {
 
       <hr style={linea} />
 
-      <ReasonForm token={token} playerName={aviso.jugador} />
+      <ReasonForm token={token} playerName={aviso.jugador} opciones={aviso.opciones} textoLibre={aviso.texto_libre} />
 
       <p style={{ ...parrafo, color: GRIS_PIE, fontSize: 13, marginTop: 28 }}>
         Invicto solo transmite lo que registra la escuela. No sabemos dónde está{" "}
         {aviso.jugador} ni somos responsables de su cuidado.
       </p>
+      <PieDeFamilia pagina="ausencia" escuela={aviso.escuela} />
     </MarcoDeEnlace>
   );
 }

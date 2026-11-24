@@ -29,14 +29,16 @@ export async function leerEnlace<T>(ruta: string, token: string): Promise<T | nu
  * preflight y la API no tiene CORS. Directo desde el navegador, el acudiente
  * vería «Failed to fetch».
  */
-export async function reenviarRespuesta(ruta: string, token: string, request: Request): Promise<NextResponse> {
+export async function reenviarRespuesta(
+  ruta: string, token: string, request: Request, resto = "", metodo: "POST" | "PUT" = "POST",
+): Promise<NextResponse> {
   if (!TOKEN.test(token)) {
     return NextResponse.json({ message: "Este enlace no es válido" }, { status: 400 });
   }
   const body = await request.text();
   try {
-    const res = await fetch(`${API_URL}/${ruta}/${token}`, {
-      method: "POST",
+    const res = await fetch(`${API_URL}/${ruta}/${token}${resto}`, {
+      method: metodo,
       headers: { "Content-Type": "application/json" },
       body: body || "{}",
       cache: "no-store",

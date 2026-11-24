@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { MarcoDeEnlace } from "@/components/MarcoDeEnlace";
+import { PieDeFamilia } from "@/components/PieDeFamilia";
 import ConsentActions from "./ConsentActions";
+import CorregirFecha from "./CorregirFecha";
+import MisPermisos from "./MisPermisos";
+import type { Permiso } from "./tipos-de-permiso";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://api.invictoapp.com";
 
@@ -21,6 +25,8 @@ interface Solicitud {
   parentesco: string | null;
   respondido: "aprobado" | "rechazado" | null;
   pedido_el: string | null;
+  /** Un servidor anterior no los manda. */
+  permisos?: Permiso[];
 }
 
 async function cargar(token: string): Promise<Solicitud | null> {
@@ -73,11 +79,14 @@ export default async function AcudientePage({ params }: Props) {
   }
 
   const { jugador, club, respondido } = solicitud;
+  const permisos = solicitud.permisos ?? [];
 
   return (
     <MarcoDeEnlace>
       <p style={{ ...parrafo, marginTop: 0, color: "#AAAAAA" }}>Invicto</p>
-      <h1 style={titulo}>¿Autorizas que {jugador} entre a {club}?</h1>
+      <h1 style={titulo}>
+        {respondido === "aprobado" && permisos.length > 0 ? `Tus permisos para ${jugador}` : `¿Autorizas que ${jugador} entre a ${club}?`}
+      </h1>
 
       <div style={tarjeta}>
         <p style={{ margin: 0, fontSize: 17, fontWeight: 600, color: "#F0F0F0" }}>
@@ -94,11 +103,13 @@ export default async function AcudientePage({ params }: Props) {
         </p>
       </div>
 
-      <p style={parrafo}>
-        Nos comunicamos contigo porque <strong>{jugador}</strong> es menor de edad y te
-        registró como su acudiente. Con tu autorización, su perfil aparecerá en la
-        plantilla de {club} dentro de Invicto.
-      </p>
+      {!(respondido === "aprobado" && permisos.length > 0) && (
+        <p style={parrafo}>
+          Nos comunicamos contigo porque <strong>{jugador}</strong> es menor de edad y te
+          registró como su acudiente. Con tu autorización, su perfil aparecerá en la
+          plantilla de {club} dentro de Invicto.
+        </p>
+      )}
 
       {respondido ? (
         <div style={{ ...tarjeta, borderColor: "#555" }}>
@@ -109,8 +120,17 @@ export default async function AcudientePage({ params }: Props) {
           </p>
         </div>
       ) : (
-        <ConsentActions token={token} playerName={jugador} clubName={club} />
+        <ConsentActions token={token} playerName={jugador} clubName={club} permisos={permisos} />
       )}
+
+      {respondido === "aprobado" && permisos.length > 0 && (
+        <>
+          <MisPermisos token={token} inicial={permisos} />
+          <CorregirFecha token={token} jugador={jugador} />
+        </>
+      )}
+
+      <PieDeFamilia pagina="acudiente" escuela={club} />
     </MarcoDeEnlace>
   );
 }
