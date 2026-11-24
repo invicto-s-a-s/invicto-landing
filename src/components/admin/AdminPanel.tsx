@@ -12,11 +12,18 @@ import UserDetail from "./UserDetail";
 import PlansPanel from "./PlansPanel";
 import ListasBase from "./ListasBase";
 import UnionesDeEscuelas from "./UnionesDeEscuelas";
+import ReportesTable from "./ReportesTable";
+import SuspendidasTable from "./SuspendidasTable";
+import SolicitudesTable from "./SolicitudesTable";
+import ModeracionPanel from "./ModeracionPanel";
+import { Permiso } from "./moderacion-tipos";
 
 interface Me {
   id: number;
   username: string;
   name: string | null;
+  /** Lo que puede hacer. Un servidor anterior no lo manda: el panel queda como antes. */
+  permissions?: Permiso[];
 }
 
 const TABS = [
@@ -29,7 +36,17 @@ const TABS = [
   { value: "planes", label: "Planes", icon: "sell" },
   { value: "listas", label: "Listas base", icon: "checklist" },
   { value: "uniones", label: "Uniones", icon: "merge" },
+  { value: "reportes", label: "Reportes", icon: "flag", permiso: ["reportes"] },
+  { value: "suspendidas", label: "Suspendidas", icon: "block", permiso: ["suspender"] },
+  { value: "solicitudes", label: "Solicitudes", icon: "inbox", permiso: ["solicitudes"] },
+  { value: "moderacion", label: "Moderación", icon: "shield", permiso: ["ajustes", "permisos"] },
 ] as const;
+
+/** Las de siempre no piden permiso, salvo «Usuarios». Quien decide de verdad es cada ruta del servidor. */
+function seVe(t: (typeof TABS)[number], permisos: readonly Permiso[] | undefined): boolean {
+  if ("permiso" in t) return !!permisos && t.permiso.some((p) => permisos.includes(p));
+  return t.value !== "usuarios" || !permisos || permisos.includes("usuarios");
+}
 
 type Tab = (typeof TABS)[number]["value"];
 
@@ -77,7 +94,7 @@ export default function AdminPanel({ me }: { me: Me }) {
         </div>
 
         <nav className="flex-1 px-3 flex flex-col gap-1">
-          {TABS.map((t) => {
+          {TABS.filter((t) => seVe(t, me.permissions)).map((t) => {
             const active = tab === t.value;
             return (
               <button
@@ -154,17 +171,21 @@ export default function AdminPanel({ me }: { me: Me }) {
           )}
           {tab === "actividad" && <Insights />}
           {tab === "lideres" && <Leaders onOpenUser={setOpenUser} />}
-          {tab === "usuarios" && <UsersTable />}
+          {tab === "usuarios" && <UsersTable permisos={me.permissions} />}
           {tab === "verificaciones" && <VerificationsTable />}
           {tab === "convocatorias" && <ConvocatoriasTable />}
           {tab === "planes" && <PlansPanel />}
           {tab === "listas" && <ListasBase />}
           {tab === "uniones" && <UnionesDeEscuelas />}
+          {tab === "reportes" && <ReportesTable permisos={me.permissions ?? []} onAbrirCuenta={setOpenUser} />}
+          {tab === "suspendidas" && <SuspendidasTable onAbrirCuenta={setOpenUser} />}
+          {tab === "solicitudes" && <SolicitudesTable />}
+          {tab === "moderacion" && <ModeracionPanel permisos={me.permissions ?? []} />}
         </div>
       </main>
 
       {openUser !== null && (
-        <UserDetail userId={openUser} onClose={() => setOpenUser(null)} />
+        <UserDetail userId={openUser} permisos={me.permissions} onClose={() => setOpenUser(null)} />
       )}
     </div>
   );

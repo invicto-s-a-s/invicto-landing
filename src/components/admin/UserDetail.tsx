@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import PlanDeLaCuenta from "./PlanDeLaCuenta";
+import SuspensionDeLaCuenta from "./SuspensionDeLaCuenta";
+import { Permiso } from "./moderacion-tipos";
 
 interface Detail {
   user: {
@@ -65,10 +67,11 @@ function Field({ label, value }: { label: string; value: string }) {
  * la lista sigue detrás, tal y como estaba.
  *
  * Los datos son **solo lectura**: cuanto menos pueda hacer, menos daño hace que
- * se filtre una sesión. Lo único que se cambia aquí es el plan de la cuenta (y,
- * en un club, si es escuela o club), lo mismo que ya se hacía en Planes.
+ * se filtre una sesión. Lo que se cambia aquí es el plan de la cuenta (y, en un
+ * club, si es escuela o club) y, con su permiso, si está suspendida. Por eso la
+ * suspensión se pinta aunque los datos no carguen: son permisos distintos.
  */
-export default function UserDetail({ userId, onClose }: { userId: number; onClose: () => void }) {
+export default function UserDetail({ userId, permisos, onClose }: { userId: number; permisos?: readonly Permiso[]; onClose: () => void }) {
   const [data, setData] = useState<Detail | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -112,6 +115,13 @@ export default function UserDetail({ userId, onClose }: { userId: number; onClos
 
         <div className="p-5 flex flex-col gap-6">
           {failed && <p className="text-sm text-[#FF5A5A]">No se pudo cargar esta cuenta.</p>}
+
+          {permisos?.includes("suspender") && (
+            <section>
+              <h3 className="font-mono text-[10px] tracking-[0.25em] uppercase text-on-surface-variant mb-2">Suspensión</h3>
+              <SuspensionDeLaCuenta key={userId} userId={userId} />
+            </section>
+          )}
 
           {u && (
             <>

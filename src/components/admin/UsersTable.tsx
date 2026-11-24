@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import UserDetail from "./UserDetail";
+import { Permiso } from "./moderacion-tipos";
 
 interface AdminUser {
   id: number;
@@ -68,7 +69,7 @@ function toCsv(rows: AdminUser[]): string {
   return `﻿${[head, ...body].join("\r\n")}`;
 }
 
-export default function UsersTable() {
+export default function UsersTable({ permisos }: { permisos?: readonly Permiso[] }) {
   const [q, setQ] = useState("");
   const [role, setRole] = useState("");
   const [page, setPage] = useState(1);
@@ -230,7 +231,7 @@ export default function UsersTable() {
       )}
 
       {openUser !== null && (
-        <UserDetail userId={openUser} onClose={() => setOpenUser(null)} />
+        <UserDetail userId={openUser} permisos={permisos} onClose={() => setOpenUser(null)} />
       )}
     </div>
   );

@@ -1,13 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { PLAY_STORE_URL } from "@/lib/descarga";
+import { NADA_PUBLICADO, Paginas } from "@/lib/paginas-tipos";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-const NAV_LINKS = [
+/** Las páginas que están sin publicar no se enlazan; el correo, si el panel no dice otro, es el de siempre. */
+const enlaces = (p: Paginas) => [
   { label: "Privacidad", href: "/politica-de-privacidad" },
   { label: "Términos", href: "/terminos-y-condiciones" },
-  { label: "Contacto", href: "mailto:privacidad@invictoapp.com.co" },
+  ...(p.child_safety ? [{ label: "Seguridad infantil", href: "/seguridad-infantil" }] : []),
+  ...(p.account_deletion ? [{ label: "Eliminar cuenta", href: "/eliminar-cuenta" }] : []),
+  { label: "Contacto", href: `mailto:${p.emails.privacy ?? "privacidad@invictoapp.com.co"}` },
   // Entrada al panel del equipo. Va en el pie y no en la cabecera a propósito:
   // es una herramienta interna, no una llamada a la acción para el visitante.
   // Apunta al subdominio, que es donde vive: ver `src/middleware.ts`.
@@ -47,6 +52,12 @@ const SOCIAL_LINKS = [
 ];
 
 export default function Footer() {
+  const [paginas, setPaginas] = useState<Paginas>(NADA_PUBLICADO);
+
+  useEffect(() => {
+    fetch("/api/paginas").then((r) => (r.ok ? r.json() : null)).then((p) => { if (p?.emails) setPaginas(p); }).catch(() => undefined);
+  }, []);
+
   return (
     <footer className="py-16 border-t border-neon/10 relative z-10" style={{ background: "rgb(13 13 13 / 0.75)" }}>
       <div className="max-w-7xl mx-auto px-6">
@@ -66,7 +77,7 @@ export default function Footer() {
 
           {/* Links */}
           <div className="flex flex-wrap gap-8">
-            {NAV_LINKS.map((link) => {
+            {enlaces(paginas).map((link) => {
               const isExternal = link.href.startsWith("mailto:") || link.href.startsWith("http");
               const className =
                 "font-mono text-[10px] tracking-[0.3em] uppercase text-on-background/35 hover:text-neon transition-colors duration-200";

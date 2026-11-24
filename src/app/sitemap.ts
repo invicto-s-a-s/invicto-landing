@@ -1,5 +1,8 @@
 import type { MetadataRoute } from "next";
+import { leerPaginas } from "@/lib/paginas";
 import { SITE_URL } from "@/lib/site";
+
+export const dynamic = "force-dynamic";
 
 /**
  * El sitemap que se le entrega a Google.
@@ -11,8 +14,14 @@ import { SITE_URL } from "@/lib/site";
  *
  * Fuera quedan el panel (interno) y `/p/…` (enlaces de compartir de un solo uso).
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+  const paginas = await leerPaginas();
+  // Las que publica el panel. Sin publicar no existen, y aquí tampoco.
+  const publicadas = [
+    ...(paginas.child_safety ? ["seguridad-infantil"] : []),
+    ...(paginas.account_deletion ? ["eliminar-cuenta"] : []),
+  ].map((ruta) => ({ url: `${SITE_URL}/${ruta}`, lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 }));
 
   return [
     {
@@ -35,5 +44,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.3,
     },
+    ...publicadas,
   ];
 }
