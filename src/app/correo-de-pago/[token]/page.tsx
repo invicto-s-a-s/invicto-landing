@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MarcoDeEnlace } from "@/components/MarcoDeEnlace";
+import { PieDeFamilia } from "@/components/PieDeFamilia";
 import { leerEnlace } from "@/lib/enlace-del-acudiente";
 import Recordatorios from "./Recordatorios";
 
@@ -69,6 +70,7 @@ export default async function CorreoDePagoPage({ params }: { params: Promise<{ t
       <p style={{ ...parrafo, color: "#999999", fontSize: 13, marginTop: 28 }}>
         INVICTO no recibe pagos, solo lleva el registro de las cuentas de la escuela.
       </p>
+      <PieDeFamilia pagina="cobro" escuela={e.escuela} />
     </MarcoDeEnlace>
   );
 }

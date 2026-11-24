@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Casillas } from "./Casillas";
+import CorregirFecha from "./CorregirFecha";
+import type { Marcados, Permiso } from "./tipos-de-permiso";
 
 type Resultado = "aprobado" | "rechazado";
 
@@ -17,12 +20,16 @@ type Resultado = "aprobado" | "rechazado";
  * que protege.
  */
 export default function ConsentActions({
-  token, playerName, clubName,
+  token, playerName, clubName, permisos,
 }: {
   token: string;
   playerName: string;
   clubName: string;
+  /** Vacío con un servidor anterior: la página es la de siempre. */
+  permisos: Permiso[];
 }) {
+  // **Sin marcar, siempre**: aunque el servidor dijera otra cosa, aquí todavía no ha respondido.
+  const [marcados, setMarcados] = useState<Marcados>({});
   const [enviando, setEnviando] = useState<Resultado | null>(null);
   const [hecho, setHecho] = useState<Resultado | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +44,8 @@ export default function ConsentActions({
       const res = await fetch(`/api/acudiente/${encodeURIComponent(token)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accept }),
+        // Sin casillas no se manda nada más: un servidor anterior rechaza un campo que no conoce.
+        body: JSON.stringify(accept && permisos.length > 0 ? { accept, permisos: marcados } : { accept }),
       });
       if (!res.ok) {
         const cuerpo = await res.json().catch(() => null);
@@ -64,12 +72,35 @@ export default function ConsentActions({
             : `${playerName} no aparecerá en la plantilla de ${clubName}. No tienes que`
               + ` hacer nada más.`}
         </p>
+        {hecho === "aprobado" && permisos.length > 0 && (
+          <>
+            <p style={{ margin: "12px 0 0", color: "#AAAAAA", fontSize: 14, lineHeight: 1.6 }}>
+              {permisos.some((p) => marcados[p.tipo])
+                ? "También guardamos los permisos que marcaste. Puedes cambiarlos cuando quieras con este mismo enlace, por lo que te recomendamos guardarlo."
+                : "No marcaste ningún permiso adicional. Puedes hacerlo cuando quieras con este mismo enlace, por lo que te recomendamos guardarlo."}
+            </p>
+            <CorregirFecha token={token} jugador={playerName} />
+          </>
+        )}
       </div>
     );
   }
 
   return (
     <div>
+      {permisos.length > 0 && (
+        <>
+          <p style={{ fontSize: 14, lineHeight: 1.7, color: "#AAAAAA", margin: "0 0 12px" }}>
+            Aparte, y solo si quieres. Marcarlo o no, no cambia tu respuesta de abajo.
+          </p>
+          <Casillas
+            permisos={permisos}
+            marcados={marcados}
+            ocupado={enviando !== null}
+            onCambiar={(tipo, si) => setMarcados((m) => ({ ...m, [tipo]: si }))}
+          />
+        </>
+      )}
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
         <button
           onClick={() => responder(true)}

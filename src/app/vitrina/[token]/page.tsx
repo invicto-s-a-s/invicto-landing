@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import DosBotones from "@/components/DosBotones";
 import { MarcoDeEnlace } from "@/components/MarcoDeEnlace";
+import { PieDeFamilia } from "@/components/PieDeFamilia";
 import { leerEnlace } from "@/lib/enlace-del-acudiente";
 
 /** **Nunca se indexa.** Lleva el nombre de un menor y su club. */
@@ -74,6 +75,7 @@ export default async function VitrinaPage({ params }: { params: Promise<{ token:
           />
         </>
       )}
+      <PieDeFamilia pagina="vitrina" escuela={p.escuela} />
     </MarcoDeEnlace>
   );
 }

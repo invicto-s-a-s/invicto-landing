@@ -11,6 +11,7 @@ import Leaders from "./Leaders";
 import UserDetail from "./UserDetail";
 import PlansPanel from "./PlansPanel";
 import ListasBase from "./ListasBase";
+import MenoresYSalud from "./MenoresYSalud";
 import UnionesDeEscuelas from "./UnionesDeEscuelas";
 import ReportesTable from "./ReportesTable";
 import SuspendidasTable from "./SuspendidasTable";
@@ -40,6 +41,7 @@ const TABS = [
   { value: "suspendidas", label: "Suspendidas", icon: "block", permiso: ["suspender"] },
   { value: "solicitudes", label: "Solicitudes", icon: "inbox", permiso: ["solicitudes"] },
   { value: "moderacion", label: "Moderación", icon: "shield", permiso: ["ajustes", "permisos"] },
+  { value: "menores", label: "Menores y salud", icon: "family_restroom" },
 ] as const;
 
 /** Las de siempre no piden permiso, salvo «Usuarios». Quien decide de verdad es cada ruta del servidor. */
@@ -181,6 +183,7 @@ export default function AdminPanel({ me }: { me: Me }) {
           {tab === "suspendidas" && <SuspendidasTable onAbrirCuenta={setOpenUser} />}
           {tab === "solicitudes" && <SolicitudesTable />}
           {tab === "moderacion" && <ModeracionPanel permisos={me.permissions ?? []} />}
+          {tab === "menores" && <MenoresYSalud />}
         </div>
       </main>
 

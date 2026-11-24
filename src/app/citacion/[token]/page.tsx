@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import DosBotones from "@/components/DosBotones";
 import { MarcoDeEnlace } from "@/components/MarcoDeEnlace";
+import { PieDeFamilia } from "@/components/PieDeFamilia";
 import { type Citacion, comoLlegar, escuelaDeLaCitacion, etiquetaDelPartido, filasDeLaTarjeta, tituloDelPartido } from "@/lib/citacion";
 import { leerEnlace } from "@/lib/enlace-del-acudiente";
 
@@ -104,6 +105,7 @@ export default async function CitacionPage({ params }: { params: Promise<{ token
       <p style={{ ...parrafo, color: "#999999", fontSize: 13, marginTop: 28 }}>
         INVICTO solo muestra lo que registra la escuela. La citación y sus cambios los decide ella.
       </p>
+      <PieDeFamilia pagina="citacion" escuela={escuela} />
     </MarcoDeEnlace>
   );
 }

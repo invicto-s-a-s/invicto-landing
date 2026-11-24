@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MarcoDeEnlace } from "@/components/MarcoDeEnlace";
+import { PieDeFamilia } from "@/components/PieDeFamilia";
 import AuthorizeActions from "./AuthorizeActions";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://api.invictoapp.com";
@@ -120,6 +121,7 @@ export default async function AutorizarPage({ params }: Props) {
       ) : (
         <AuthorizeActions token={token} minorName={menor} />
       )}
+      <PieDeFamilia pagina="autorizar" />
     </MarcoDeEnlace>
   );
 }

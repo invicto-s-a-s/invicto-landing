@@ -2,19 +2,24 @@
 
 import { useState } from "react";
 
-const MOTIVOS = [
-  { value: "salud", label: "Salud" },
-  { value: "viaje", label: "Viaje" },
-  { value: "estudio", label: "Estudio" },
-  { value: "transporte", label: "Transporte" },
-  { value: "otro", label: "Otro" },
-] as const;
+export interface Motivo { clave: string; nombre: string }
 
-type Motivo = (typeof MOTIVOS)[number]["value"];
+/** Los de siempre, con un servidor que aún no manda la lista de la escuela. */
+const DE_SIEMPRE: Motivo[] = [
+  { clave: "salud", nombre: "Salud" },
+  { clave: "viaje", nombre: "Viaje" },
+  { clave: "estudio", nombre: "Estudio" },
+  { clave: "transporte", nombre: "Transporte" },
+  { clave: "otro", nombre: "Otro" },
+];
 
 interface Props {
   token: string;
   playerName: string;
+  /** La lista de la escuela. Un servidor anterior no la manda. */
+  opciones?: Motivo[];
+  /** Si además se puede escribir. De «Enfermedad» nunca. */
+  textoLibre?: boolean;
 }
 
 /**
@@ -26,11 +31,11 @@ interface Props {
  * falle. **Eso es deliberado**: el dato que de verdad hace falta a las seis de
  * la tarde es el teléfono, no este formulario.
  *
- * ## «Salud» no pide explicación, y eso es la ley
+ * ## «Enfermedad» no lleva detalle, y eso es la ley
  *
- * Es un dato sensible (Ley 1581), así que la nota es opcional **para todos los
- * motivos** y el texto lo dice. Un campo obligatorio debajo de «Salud» sería
- * pedirle a un padre que escriba el diagnóstico de su hijo en una web.
+ * Es un dato sensible (Ley 1581): con ese motivo no hay dónde escribir, y el
+ * servidor tampoco lo guardaría. En los demás la nota es opcional, y la escuela
+ * o INVICTO pueden cerrarla del todo.
  *
  * ## Se puede corregir, y queda
  *
@@ -38,12 +43,15 @@ interface Props {
  * los dos y el club ve el último. Por eso el botón sigue ahí después de
  * guardar, con el texto cambiado.
  */
-export default function ReasonForm({ token, playerName }: Props) {
-  const [motivo, setMotivo] = useState<Motivo | null>(null);
+export default function ReasonForm({ token, playerName, opciones, textoLibre }: Props) {
+  const lista = opciones?.length ? opciones : DE_SIEMPRE;
+  const [motivo, setMotivo] = useState<string | null>(null);
   const [nota, setNota] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [guardado, setGuardado] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const conTexto = textoLibre !== false && motivo !== "salud";
 
   const enviar = async () => {
     if (!motivo) return;
@@ -56,7 +64,7 @@ export default function ReasonForm({ token, playerName }: Props) {
       const res = await fetch(`/api/ausencia/${encodeURIComponent(token)}/reason`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ category: motivo, note: nota.trim() || null }),
+        body: JSON.stringify({ category: motivo, note: conTexto ? nota.trim() || null : null }),
       });
       if (!res.ok) {
         const cuerpo = await res.json().catch(() => null);
@@ -86,37 +94,43 @@ export default function ReasonForm({ token, playerName }: Props) {
         ¿Cuál fue el motivo?
       </p>
       <div style={{ display: "flex", gap: 9, flexWrap: "wrap" }}>
-        {MOTIVOS.map((m) => (
+        {lista.map((m) => (
           <button
-            key={m.value}
-            onClick={() => setMotivo(m.value)}
+            key={m.clave}
+            onClick={() => setMotivo(m.clave)}
             style={{
               ...pastilla,
-              background: motivo === m.value ? NEON : "transparent",
-              color: motivo === m.value ? "#0D0D0D" : "#D0D0D0",
-              borderColor: motivo === m.value ? NEON : "#555",
+              background: motivo === m.clave ? NEON : "transparent",
+              color: motivo === m.clave ? "#0D0D0D" : "#D0D0D0",
+              borderColor: motivo === m.clave ? NEON : "#555",
             }}
           >
-            {m.label}
+            {m.nombre}
           </button>
         ))}
       </div>
 
-      <label
-        htmlFor="nota"
-        style={{ display: "block", color: "#AAAAAA", fontSize: 14, margin: "22px 0 8px" }}
-      >
-        Si deseas agregar algo más (opcional)
-      </label>
-      <textarea
-        id="nota"
-        value={nota}
-        onChange={(e) => setNota(e.target.value)}
-        maxLength={500}
-        rows={3}
-        placeholder="No es necesario dar detalles."
-        style={area}
-      />
+      {conTexto ? (
+        <>
+          <label
+            htmlFor="nota"
+            style={{ display: "block", color: "#AAAAAA", fontSize: 14, margin: "22px 0 8px" }}
+          >
+            Si deseas agregar algo más (opcional)
+          </label>
+          <textarea
+            id="nota"
+            value={nota}
+            onChange={(e) => setNota(e.target.value)}
+            maxLength={500}
+            rows={3}
+            placeholder="No es necesario dar detalles."
+            style={area}
+          />
+        </>
+      ) : (
+        <p style={{ color: "#AAAAAA", fontSize: 14, margin: "22px 0 0" }}>No es necesario dar detalles.</p>
+      )}
 
       <button
         onClick={enviar}
