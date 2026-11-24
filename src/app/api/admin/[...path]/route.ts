@@ -42,7 +42,7 @@ export async function GET(request: Request, ctx: Ctx) {
   const query = new URL(request.url).search;
   const result = await apiFetch(`${to}${query}`);
   return NextResponse.json(
-    { data: result.data, message: result.message },
+    { data: result.data, message: result.message, code: result.code },
     { status: result.ok ? 200 : result.status || 502 },
   );
 }
@@ -56,7 +56,7 @@ async function escribir(method: "POST" | "PUT" | "DELETE", request: Request, ctx
   const body = method === "DELETE" ? undefined : (await request.text()) || "{}";
   const result = await apiFetch(to, { method, body });
   return NextResponse.json(
-    { data: result.data, message: result.message },
+    { data: result.data, message: result.message, code: result.code },
     { status: result.ok ? 200 : result.status || 502 },
   );
 }

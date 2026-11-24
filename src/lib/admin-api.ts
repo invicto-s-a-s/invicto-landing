@@ -26,6 +26,8 @@ interface ApiResult<T> {
   status: number;
   data: T | null;
   message?: string;
+  /** El código del error, cuando el servidor lo manda (`DUENO_DE_ESCUELA`). */
+  code?: string;
 }
 
 /** Llama a la API de Invicto desde el servidor, con el token de la sesión. */
@@ -49,7 +51,10 @@ export async function apiFetch<T>(
     const body = await res.json().catch(() => null);
     const message = Array.isArray(body?.message) ? body.message[0] : body?.message;
 
-    return { ok: res.ok, status: res.status, data: body?.data ?? null, message };
+    return {
+      ok: res.ok, status: res.status, data: body?.data ?? null, message,
+      code: !res.ok && typeof body?.code === "string" ? body.code : undefined,
+    };
   } catch {
     // La API cae o la red falla: el panel lo enseña como aviso, no como pantalla rota.
     return { ok: false, status: 0, data: null, message: "No se pudo conectar con la API" };

@@ -1,5 +1,5 @@
 /** Lo que devuelve una llamada del panel: el dato, o el mensaje del servidor si falló. */
-export interface Respuesta<T> { ok: boolean; data: T | null; message: string | null }
+export interface Respuesta<T> { ok: boolean; data: T | null; message: string | null; code: string | null }
 
 /**
  * Una llamada a la API a través del proxy del panel (`/api/admin/...`).
@@ -22,6 +22,7 @@ export async function llamarPanel<T>(
     ok: !!res?.ok,
     data: (json?.data as T) ?? null,
     message: typeof json?.message === "string" ? json.message : null,
+    code: typeof json?.code === "string" ? json.code : null,
   };
 }
 
