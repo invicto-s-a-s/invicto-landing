@@ -16,6 +16,8 @@ import { SITE_URL } from "@/lib/site";
  * pero eso solo pide que no se publiquen: esto pide que ni se visiten, que es
  * lo que de verdad hace falta cuando el secreto está en la propia dirección.
  *
+ * `/correo-de-pago/` no lleva nombres, pero su URL también es una credencial.
+ *
  * El subdominio del panel no usa esto: el middleware le pone `X-Robots-Tag` a
  * todo lo que sirve.
  */
@@ -26,7 +28,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: [
         "/admin", "/api/", "/p/",
-        "/autorizar/", "/ausencia/", "/acudiente/",
+        "/autorizar/", "/ausencia/", "/acudiente/", "/correo-de-pago/",
       ],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
