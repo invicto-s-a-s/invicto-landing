@@ -9,6 +9,7 @@ import WhyInvicto from "@/components/sections/WhyInvicto";
 import Features from "@/components/sections/Features";
 import Ratings from "@/components/sections/Ratings";
 import Ecosystem from "@/components/sections/Ecosystem";
+import ContactForm from "@/components/sections/ContactForm";
 import DownloadCTA from "@/components/sections/DownloadCTA";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -31,6 +32,7 @@ export default function Landing() {
         <Ratings />
         <Ecosystem />
         <DownloadCTA />
+        <ContactForm />
       </main>
 
       <Footer />
