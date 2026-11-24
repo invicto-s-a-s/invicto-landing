@@ -112,7 +112,7 @@ export default async function AcudientePage({ params }: Props) {
       )}
 
       {respondido ? (
-        <div style={{ ...tarjeta, borderColor: "#555" }}>
+        <div style={{ ...tarjeta, borderColor: "#555", marginTop: 16 }}>
           <p style={{ margin: 0, color: "#AAAAAA", fontSize: 14, lineHeight: 1.6 }}>
             {respondido === "aprobado"
               ? `Ya autorizaste esta solicitud. ${jugador} está en la plantilla de ${club}.`
