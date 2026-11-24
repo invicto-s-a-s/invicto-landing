@@ -11,6 +11,7 @@ import Leaders from "./Leaders";
 import UserDetail from "./UserDetail";
 import PlansPanel from "./PlansPanel";
 import ListasBase from "./ListasBase";
+import MenoresYSalud from "./MenoresYSalud";
 import UnionesDeEscuelas from "./UnionesDeEscuelas";
 
 interface Me {
@@ -29,6 +30,7 @@ const TABS = [
   { value: "planes", label: "Planes", icon: "sell" },
   { value: "listas", label: "Listas base", icon: "checklist" },
   { value: "uniones", label: "Uniones", icon: "merge" },
+  { value: "menores", label: "Menores y salud", icon: "family_restroom" },
 ] as const;
 
 type Tab = (typeof TABS)[number]["value"];
@@ -160,6 +162,7 @@ export default function AdminPanel({ me }: { me: Me }) {
           {tab === "planes" && <PlansPanel />}
           {tab === "listas" && <ListasBase />}
           {tab === "uniones" && <UnionesDeEscuelas />}
+          {tab === "menores" && <MenoresYSalud />}
         </div>
       </main>
 
