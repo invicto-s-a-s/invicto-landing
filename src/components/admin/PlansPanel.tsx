@@ -9,11 +9,17 @@ import AccountPicker from "./AccountPicker";
 import PlanDeLaCuenta from "./PlanDeLaCuenta";
 import AccesoTotal from "./AccesoTotal";
 import LicenciasExtra from "./LicenciasExtra";
+import PagosDePlanes from "./PagosDePlanes";
+import AjustesDePlanes from "./AjustesDePlanes";
+import PaqueteCuerpoTecnico from "./PaqueteCuerpoTecnico";
 
 const VISTAS = [
   { value: "solicitudes", label: "Solicitudes" },
   { value: "asignar", label: "Asignación manual" },
+  { value: "cobros", label: "Cobros" },
   { value: "catalogo", label: "Catálogo" },
+  { value: "ajustes", label: "Ajustes" },
+  { value: "cuerpo", label: "Cuerpo técnico" },
   { value: "candados", label: "Candados" },
   { value: "licencias", label: "Licencias extra" },
   { value: "acceso", label: "Acceso total" },
@@ -85,6 +91,9 @@ export default function PlansPanel() {
 
       {vista === "solicitudes" && <PlanRequests />}
       {vista === "asignar" && <AsignarAMano />}
+      {vista === "cobros" && <PagosDePlanes />}
+      {vista === "ajustes" && <AjustesDePlanes />}
+      {vista === "cuerpo" && <PaqueteCuerpoTecnico />}
       {vista === "catalogo" && <PlanCatalog />}
       {vista === "candados" && <><InterruptorVitrina /><PlanGates /></>}
       {vista === "licencias" && <LicenciasExtra />}

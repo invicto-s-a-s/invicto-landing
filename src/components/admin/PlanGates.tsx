@@ -12,10 +12,10 @@ const CANDADOS = [
   { key: "radar.compare", nombre: "Comparativas VS", cerrado: "Ver y guardar comparativas queda desde Scout PRO." },
   { key: "report.pdf_export", nombre: "Exportar a PDF", cerrado: "El PDF del reporte y de la comparativa queda desde Scout PRO. Lo aplica la app." },
   { key: "watchlist.max", nombre: "Perfiles guardados", cerrado: "30 en Gratis, 300 en Básico, sin tope desde PRO. Quien ya tenga más los conserva, pero no guarda otro." },
-  { key: "messages.monthly", nombre: "Mensajes del ojeador al mes", cerrado: "10, 100, 300 y 1.000 según el plan. Cuentan todos los que envía." },
-  { key: "convocatorias.yearly_max", nombre: "Convocatorias al año", cerrado: "2 al año en Club Gratis y en todas las escuelas, según el catálogo de hoy." },
+  { key: "messages.monthly", nombre: "Mensajes del ojeador al mes", cerrado: "10, 100, 300 y 1.000 según el plan. Solo cuenta con «Mensajes» en Ajustes: con «Contactos nuevos» los mensajes no tienen tope." },
+  { key: "convocatorias.yearly_max", nombre: "Convocatorias al año", cerrado: "2 al año en Club Gratis y en la Escuela Registrada, 12 en las escuelas de pago y sin límite en los clubes de pago y en Escuela Élite." },
   { key: "search.scope", nombre: "Búsqueda nacional de clubes", cerrado: "Un club busca solo entre quienes se postularon a sus convocatorias, salvo Cantera." },
-  { key: "panel.full", nombre: "Panel completo del club", cerrado: "Partidos, embudo de convocatorias, cara a cara y alineación quedan desde Regional. Las escuelas de pago no lo tienen en el catálogo de hoy." },
+  { key: "panel.full", nombre: "Panel completo del club", cerrado: "Partidos, embudo de convocatorias, cara a cara y alineación quedan desde Regional y en las escuelas de pago." },
 ] as const;
 
 /**

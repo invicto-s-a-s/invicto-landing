@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 
-export type Respuesta = { months: number } | { note: string } | Record<string, never>;
+import CobroExterno, { type Cobro, cobroInicial, cobroParaEnviar, queFaltaDelCobro } from "./CobroExterno";
+
+export type Respuesta = { months?: number; note?: string; payment?: Cobro };
 
 interface Props {
   username: string;
@@ -11,6 +13,10 @@ interface Props {
   period: "month" | "year";
   /** Solo en los packs: lo que hay que cobrar hoy. `null`: no se puede aprobar. */
   cobroHoy?: number | null;
+  medios: string[];
+  cobroObligatorio: boolean;
+  /** `false` con un servidor que aún no registra cobros: se aprueba como siempre. */
+  conCobro: boolean;
   busy: boolean;
   onResolver: (aprobar: boolean, payload: Respuesta) => void;
 }
@@ -43,10 +49,15 @@ const MOTIVOS = [
   },
 ];
 
-export default function ResolverSolicitud({ username, planName, esPack, period, cobroHoy, busy, onResolver }: Props) {
+export default function ResolverSolicitud({
+  username, planName, esPack, period, cobroHoy, medios, cobroObligatorio, conCobro, busy, onResolver,
+}: Props) {
   const [modo, setModo] = useState<"aprobar" | "rechazar" | null>(null);
   const [meses, setMeses] = useState(period === "year" ? 12 : 1);
   const [motivo, setMotivo] = useState("");
+  const [cobro, setCobro] = useState<Cobro | null>(null);
+  const elCobro = cobro ?? cobroInicial(cobroObligatorio);
+  const falta = conCobro ? queFaltaDelCobro(elCobro, cobroObligatorio, false) : [];
 
   const boton = "text-xs px-4 py-2 rounded-lg disabled:opacity-40";
   const mesesValidos = Number.isInteger(meses) && meses >= 1 && meses <= 36;
@@ -146,14 +157,19 @@ export default function ResolverSolicitud({ username, planName, esPack, period, 
           {!mesesValidos && <p className="text-xs text-[#FF5A5A]">Escribe un número de meses entre 1 y 36.</p>}
         </div>
       )}
+      {conCobro && <CobroExterno cobro={elCobro} onCambiar={setCobro} medios={medios} obligatorio={cobroObligatorio} esPack={esPack} />}
+      {falta.length > 0 && <p className="text-xs text-[#FFB020]">Falta registrar: {falta.join(", ")}.</p>}
       <p className="text-xs text-on-surface-variant">
         No hace falta escribirle nada: al aprobar, @{username} recibe en la app «{esPack ? AVISO_PACK : AVISO_PLAN}»
       </p>
       <div className="flex flex-wrap gap-2">
         {cancelar}
         <button
-          onClick={() => onResolver(true, esPack ? {} : { months: meses })}
-          disabled={busy || (!esPack && !mesesValidos)}
+          onClick={() => {
+            const payment = conCobro ? cobroParaEnviar(elCobro) : undefined;
+            onResolver(true, { ...(esPack ? {} : { months: meses }), ...(payment ? { payment } : {}) });
+          }}
+          disabled={busy || (!esPack && !mesesValidos) || falta.length > 0}
           className={`${boton} bg-neon text-background font-medium`}
         >
           {busy ? "…" : esPack || !mesesValidos ? `Activar ${planName}` : `Activar ${planName} por ${meses} ${meses === 1 ? "mes" : "meses"}`}

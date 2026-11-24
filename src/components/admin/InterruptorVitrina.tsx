@@ -55,8 +55,8 @@ export default function InterruptorVitrina() {
       <div className="min-w-0 flex-1 basis-64">
         <p className="text-sm font-medium">Vitrina Élite</p>
         <p className="text-xs text-on-surface-variant mt-1">
-          Los jugadores que cumplen el Reto Vitrina salen destacados 7 días en el inicio. Apagada, la lista queda vacía y
-          la app no la ofrece; el módulo de Premium sigue.
+          Los jugadores que cumplen el Reto Vitrina salen en la lista que ven ojeadores verificados y clubes. Un menor, solo
+          con la autorización de su acudiente. Apagada, la lista queda vacía; el módulo de Premium sigue.
         </p>
         <p className="text-[11px] text-on-surface-variant/60 mt-1 font-mono">vitrina.activa</p>
         {error && <p className="text-xs text-[#FF5A5A] mt-1">{error}</p>}

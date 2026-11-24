@@ -18,6 +18,8 @@ export interface Conteo { key: string; total: number; listadas: number; resto: n
 /** Un plan que se le puede dar a una cuenta, de su escalera. */
 export interface PlanConcedible {
   key: string; name: string; tier: number; kind: string; is_default: boolean; is_private: boolean;
+  /** La escalera. Opcional: un servidor anterior no la manda. */
+  segment?: string;
 }
 
 export const SEGMENTOS: Record<string, string> = { player: "Jugador", scout: "Ojeador", club: "Club", school: "Escuela" };

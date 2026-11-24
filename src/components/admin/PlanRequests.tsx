@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import ResolverSolicitud, { type Respuesta } from "./ResolverSolicitud";
+import { useReglasDelCobro } from "./CobroExterno";
 
 interface PlanRequest {
   id: number;
@@ -15,6 +16,8 @@ interface PlanRequest {
   plan_name: string;
   /** `addon` es el Pack +25: no lleva meses, dura lo que dure el plan de la escuela. */
   plan_kind?: "plan" | "addon";
+  /** De qué escalera es. Opcional: un servidor anterior no lo manda. */
+  plan_segment?: string;
   /**
    * Solo en los packs pendientes: lo que hay que cobrar hoy, la parte que falta
    * hasta el corte del plan (Alexander, 2026-11-11). `null` si la escuela ya no
@@ -65,6 +68,7 @@ export default function PlanRequests({ onChange }: { onChange?: () => void }) {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const reglas = useReglasDelCobro();
 
   // `load` no toca el estado antes de que conteste la red: el «cargando» lo
   // pone quien cambia de pestaña, no el efecto.
@@ -165,6 +169,9 @@ export default function PlanRequests({ onChange }: { onChange?: () => void }) {
                 esPack={req.plan_kind === "addon"}
                 period={req.period}
                 cobroHoy={req.cobro_hoy}
+                medios={reglas?.medios ?? []}
+                cobroObligatorio={!!reglas && reglas.obligatorio.includes(req.plan_segment ?? req.plan_key.split("_")[0])}
+                conCobro={!!reglas}
                 busy={busy === req.id}
                 onResolver={(aprobar, payload) => resolver(req, aprobar, payload)}
               />
