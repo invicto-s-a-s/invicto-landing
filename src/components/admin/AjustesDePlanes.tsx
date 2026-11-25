@@ -9,11 +9,19 @@ interface Parametro { key: string; value: string; kind: string; description: str
 /** Los que tienen pocos valores posibles: se eligen, no se escriben. El servidor valida igual. */
 const OPCIONES: Record<string, [valor: string, texto: string][]> = {
   "contacts.mode": [["mensajes", "Mensajes que envía"], ["contactos", "Contactos nuevos que inicia"]],
-  "plans.show_prices": [["true", "Se ven"], ["false", "No se ven"]],
   "packs.excess_enabled": [["off", "Apagado"], ["on", "Encendido"]],
   "schools.trial_enabled": [["off", "Apagado"], ["on", "Encendido"]],
   "vitrina.audience": [["ojeadores_y_clubes", "Ojeadores verificados y clubes"], ["todos", "Todos los que tienen sesión"]],
   "vitrina.rotation_days": [["3", "3 días"], ["7", "7 días"]],
+};
+
+/** Los que son una lista de perfiles: se marcan. Sin ninguno marcado va «ninguno», que el servidor entiende. */
+const POR_PERFIL = ["plans.prices_by_segment", "plans.requests_by_segment", "plans.payment_required_segments"];
+const PERFILES: [valor: string, texto: string][] = [["player", "Jugadores"], ["scout", "Ojeadores"], ["club", "Clubes"], ["school", "Escuelas"]];
+const marcados = (v: string) => v.split(",").map((s) => s.trim().toLowerCase()).filter((s) => PERFILES.some(([k]) => k === s));
+const alternar = (v: string, perfil: string) => {
+  const hay = marcados(v);
+  return PERFILES.map(([k]) => k).filter((k) => (k === perfil ? !hay.includes(k) : hay.includes(k))).join(",") || "ninguno";
 };
 
 const TITULOS: Record<string, string> = {
@@ -67,7 +75,16 @@ function Fila({ p, onListo }: { p: Parametro; onListo: () => Promise<void> }) {
     <div className="admin-card border border-[#222] rounded-xl p-4 grid gap-2">
       <p className="text-xs text-on-surface-variant">{p.description}</p>
       <div className="flex flex-wrap gap-2 items-center">
-        {opciones ? (
+        {POR_PERFIL.includes(p.key) ? (
+          <div className="flex flex-wrap gap-x-4 gap-y-2" role="group" aria-label={p.description}>
+            {PERFILES.map(([k, t]) => (
+              <label key={k} className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={marcados(valor).includes(k)} onChange={() => setValor(alternar(valor, k))} />
+                {t}
+              </label>
+            ))}
+          </div>
+        ) : opciones ? (
           <select className={`${campo} max-w-xs`} value={valor} onChange={(e) => setValor(e.target.value)} aria-label={p.key}>
             {opciones.map(([v, t]) => <option key={v} value={v}>{t}</option>)}
           </select>
