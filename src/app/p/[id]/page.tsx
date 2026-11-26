@@ -6,7 +6,7 @@ import {
   getPost,
   type PublicPost,
 } from "@/lib/invicto-api";
-import { OpenInApp } from "@/components/OpenInApp";
+import Publicacion from "./Publicacion";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://invictoapp.com";
 
@@ -65,7 +65,6 @@ export default async function PostPage({ params }: Props) {
   if (!post) notFound();
 
   const author = authorDisplayName(post.user);
-  const image = coverImage(post);
   const date = new Date(post.createdAt).toLocaleDateString("es-CO", {
     day: "numeric",
     month: "long",
@@ -73,51 +72,8 @@ export default async function PostPage({ params }: Props) {
   });
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-xl flex-col gap-4 px-4 py-8">
-      <OpenInApp postId={post.id} />
-
-      <article className="overflow-hidden rounded-2xl border border-white/10 bg-[#201F20]">
-        <header className="flex items-center gap-3 p-4">
-          {post.user.profile_photo ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              src={post.user.profile_photo}
-              alt=""
-              className="h-11 w-11 rounded-full object-cover"
-            />
-          ) : (
-            <div className="h-11 w-11 rounded-full bg-white/10" />
-          )}
-          <div className="min-w-0">
-            <p className="truncate font-semibold text-white">{author}</p>
-            <p className="truncate text-sm text-white/50">@{post.user.username}</p>
-          </div>
-        </header>
-
-        {image && (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src={image}
-            alt={post.caption ?? `Publicación de ${author}`}
-            className="aspect-square w-full bg-black object-cover"
-          />
-        )}
-
-        <div className="flex flex-col gap-2 p-4">
-          <div className="flex gap-4 text-sm text-white/70">
-            <span>{post.likes_count} me gusta</span>
-            <span>{post.comments_count} comentarios</span>
-          </div>
-          {post.caption && (
-            <p className="whitespace-pre-wrap text-white">
-              <span className="font-semibold">{post.user.username}</span> {post.caption}
-            </p>
-          )}
-          <time className="text-xs text-white/40" dateTime={post.createdAt}>
-            {date}
-          </time>
-        </div>
-      </article>
+    <main className="mx-auto flex min-h-screen w-full max-w-xl flex-col gap-4 px-4 py-6">
+      <Publicacion post={post} autor={author} fecha={date} />
     </main>
   );
 }
