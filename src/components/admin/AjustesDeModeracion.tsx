@@ -7,10 +7,21 @@ import { useDialogo } from "./Dialogo";
 
 interface Ajuste { key: string; value: string; description: string }
 
+/**
+ * Lo que se lee antes de tocar la versión. El 2026-11-26 se puso la 1.5.0 de
+ * mínima antes de que estuviera en Play Store: quien tenía la 1.4.1 se habría
+ * quedado por fuera, con un «Actualizar» que no lleva a ninguna versión nueva.
+ */
+const SOLO_SI_YA_ESTA: Record<string, string> = {
+  "app.min_version.android": "Ponla solo cuando esa versión ya esté publicada para todos en Play Store. Si todavía no está, nadie con una versión anterior podrá entrar a la app.",
+  "app.min_version.ios": "Ponla solo cuando esa versión ya esté publicada para todos en la App Store. Si todavía no está, nadie con una versión anterior podrá entrar a la app.",
+  "app.recommended_version.android": "Ponla solo cuando esa versión ya esté en Play Store. Si no, el aviso manda a actualizar y no hay nada nuevo que bajar.",
+  "app.recommended_version.ios": "Ponla solo cuando esa versión ya esté en la App Store. Si no, el aviso manda a actualizar y no hay nada nuevo que bajar.",
+};
+
 /** Lo que deja a gente por fuera o publica algo se pregunta dos veces. */
 const DELICADOS: Record<string, string> = {
-  "app.min_version.android": "Quien tenga una versión anterior no podrá usar la app hasta actualizarla.",
-  "app.min_version.ios": "Quien tenga una versión anterior no podrá usar la app hasta actualizarla.",
+  ...SOLO_SI_YA_ESTA,
   "legal.child_safety": "Publica la página con el texto de borrador. Primero lo revisa Legal.",
   "legal.account_deletion": "Publica la página con el texto de borrador. Primero lo revisa Legal.",
   "signup.min_age": "Cambia quién puede crear su propia cuenta. Primero lo revisa Legal.",
@@ -49,6 +60,9 @@ export default function AjustesDeModeracion() {
       {items?.map((a) => (
         <div key={a.key} className="admin-card border border-[#222] rounded-xl p-4 flex flex-col gap-2">
           <p className="text-sm">{a.description}</p>
+          {SOLO_SI_YA_ESTA[a.key] && (
+            <p className="text-xs leading-relaxed text-[#F5B84B] border-l-2 border-[#F5B84B] pl-3">{SOLO_SI_YA_ESTA[a.key]}</p>
+          )}
           <p className="text-[11px] text-on-surface-variant/60 font-mono">{a.key}</p>
           <div className="flex gap-2">
             <input
