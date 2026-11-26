@@ -18,6 +18,7 @@ import SuspendidasTable from "./SuspendidasTable";
 import SolicitudesTable from "./SolicitudesTable";
 import ModeracionPanel from "./ModeracionPanel";
 import { Permiso } from "./moderacion-tipos";
+import NavDelPanel, { grupoDe, pestana, type Tab } from "./NavDelPanel";
 
 interface Me {
   id: number;
@@ -26,31 +27,6 @@ interface Me {
   /** Lo que puede hacer. Un servidor anterior no lo manda: el panel queda como antes. */
   permissions?: Permiso[];
 }
-
-const TABS = [
-  { value: "resumen", label: "Resumen", icon: "dashboard" },
-  { value: "actividad", label: "Actividad", icon: "monitoring" },
-  { value: "lideres", label: "Líderes", icon: "emoji_events" },
-  { value: "usuarios", label: "Usuarios", icon: "group" },
-  { value: "verificaciones", label: "Verificaciones", icon: "verified_user" },
-  { value: "convocatorias", label: "Convocatorias", icon: "campaign" },
-  { value: "planes", label: "Planes", icon: "sell" },
-  { value: "listas", label: "Listas base", icon: "checklist" },
-  { value: "uniones", label: "Uniones", icon: "merge" },
-  { value: "reportes", label: "Reportes", icon: "flag", permiso: ["reportes"] },
-  { value: "suspendidas", label: "Suspendidas", icon: "block", permiso: ["suspender"] },
-  { value: "solicitudes", label: "Solicitudes", icon: "inbox", permiso: ["solicitudes"] },
-  { value: "moderacion", label: "Moderación", icon: "shield", permiso: ["ajustes", "permisos"] },
-  { value: "menores", label: "Menores y salud", icon: "family_restroom" },
-] as const;
-
-/** Las de siempre no piden permiso, salvo «Usuarios». Quien decide de verdad es cada ruta del servidor. */
-function seVe(t: (typeof TABS)[number], permisos: readonly Permiso[] | undefined): boolean {
-  if ("permiso" in t) return !!permisos && t.permiso.some((p) => permisos.includes(p));
-  return t.value !== "usuarios" || !permisos || permisos.includes("usuarios");
-}
-
-type Tab = (typeof TABS)[number]["value"];
 
 export default function AdminPanel({ me }: { me: Me }) {
   const router = useRouter();
@@ -83,11 +59,11 @@ export default function AdminPanel({ me }: { me: Me }) {
         // `sticky h-screen` y no `static`: en un flex la barra se estira con el
         // contenido, así que en una pantalla larga el botón de cerrar sesión
         // acababa a miles de píxeles hacia abajo.
-        className={`fixed lg:sticky lg:top-0 inset-y-0 left-0 z-40 w-60 shrink-0 lg:h-screen admin-surface border-r border-[#1C1C1C] flex flex-col transition-transform duration-200 ${
+        className={`fixed lg:sticky lg:top-0 inset-y-0 left-0 z-40 w-64 max-w-[85vw] shrink-0 h-[100dvh] lg:h-screen admin-surface border-r border-[#1C1C1C] flex flex-col transition-transform duration-200 ${
           menuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <div className="px-6 py-6">
+        <div className="px-6 py-6 shrink-0">
           {/* El logo viene en negro para fondo claro; en la web se invierte. */}
           <img src="/logo.png" alt="Invicto" className="h-7 object-contain brightness-0 invert" />
           <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-on-surface-variant mt-2">
@@ -95,36 +71,14 @@ export default function AdminPanel({ me }: { me: Me }) {
           </p>
         </div>
 
-        <nav className="flex-1 px-3 flex flex-col gap-1">
-          {TABS.filter((t) => seVe(t, me.permissions)).map((t) => {
-            const active = tab === t.value;
-            return (
-              <button
-                key={t.value}
-                onClick={() => { setTab(t.value); setMenuOpen(false); }}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors ${
-                  active ? "bg-neon text-background font-medium" : "text-on-surface-variant hover:bg-[#161616]"
-                }`}
-              >
-                <span className="material-symbols-outlined text-[19px]">{t.icon}</span>
-                <span className="flex-1">{t.label}</span>
-                {/* El pendiente se ve desde cualquier pestaña: es lo único que
-                    está esperando a que alguien haga algo. */}
-                {t.value === "verificaciones" && pendientes > 0 && (
-                  <span
-                    className={`text-[10px] rounded-full px-1.5 py-0.5 ${
-                      active ? "bg-background text-neon" : "bg-[#FF5A5A] text-white"
-                    }`}
-                  >
-                    {pendientes}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+        <NavDelPanel
+          tab={tab}
+          permisos={me.permissions}
+          pendientes={{ verificaciones: pendientes }}
+          onElegir={(t) => { setTab(t); setMenuOpen(false); }}
+        />
 
-        <div className="p-3 border-t border-[#1C1C1C]">
+        <div className="p-3 border-t border-[#1C1C1C] shrink-0">
           <p className="px-3 text-sm truncate">{me.name || me.username}</p>
           <p className="px-3 text-xs text-on-surface-variant truncate mb-2">@{me.username}</p>
           <button
@@ -146,7 +100,7 @@ export default function AdminPanel({ me }: { me: Me }) {
 
       {/* ── Contenido ───────────────────────────────────────────────────── */}
       <main className="flex-1 min-w-0">
-        <header className="admin-surface sticky top-0 z-20 flex items-center gap-4 px-6 py-5 border-b border-[#1C1C1C]">
+        <header className="admin-surface sticky top-0 z-20 flex items-center gap-4 px-4 sm:px-6 py-4 sm:py-5 border-b border-[#1C1C1C]">
           <button
             onClick={() => setMenuOpen(true)}
             className="lg:hidden text-on-surface-variant"
@@ -154,12 +108,15 @@ export default function AdminPanel({ me }: { me: Me }) {
           >
             <span className="material-symbols-outlined">menu</span>
           </button>
-          <h1 className="font-headline font-black italic text-2xl">
-            {TABS.find((t) => t.value === tab)?.label.toUpperCase()}
-          </h1>
+          <div className="min-w-0">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-on-surface-variant truncate">{grupoDe(tab)?.label}</p>
+            <h1 className="font-headline font-black italic text-xl sm:text-2xl truncate">
+              {pestana(tab)?.label.toUpperCase()}
+            </h1>
+          </div>
         </header>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {tab === "resumen" && (
             failed ? (
               <p className="text-sm text-[#FF5A5A]">
