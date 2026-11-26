@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { llamarPanel } from "./panel-api";
 import { Fallo, Filtro, Vacio, boton, botonPeligro, entrada } from "./PiezasDeModeracion";
 import { Pagina, fechaYHora } from "./moderacion-tipos";
+import { useDialogo } from "./Dialogo";
 
 interface Solicitud {
   id: number; name: string; email: string; phone: string | null; kind: string; organization: string | null; city: string | null;
@@ -18,6 +19,7 @@ const CORREO: Record<string, string> = { enviado: "Avisada por correo", fallo: "
 
 /** Lo que llega por el formulario de la web. */
 export default function SolicitudesTable() {
+  const dialogo = useDialogo();
   const [estado, setEstado] = useState<(typeof ESTADOS)[number]["value"]>("nueva");
   const [pagina, setPagina] = useState(1);
   const [datos, setDatos] = useState<Pagina<Solicitud> | null>(null);
@@ -38,7 +40,10 @@ export default function SolicitudesTable() {
     await cargar();
   };
   const borrar = async (id: number) => {
-    if (!confirm("¿Borrar esta solicitud?\n\nEs para cuando la persona pide que eliminen sus datos. No se puede deshacer.")) return;
+    if (!(await dialogo.confirmar({
+      titulo: "¿Borrar esta solicitud?", boton: "Borrar", peligro: true,
+      texto: "Es para cuando la persona pide que eliminen sus datos. No se puede deshacer.",
+    }))) return;
     const r = await llamarPanel(`/admin/contact-requests/${id}`, "DELETE");
     setError(r.ok ? null : (r.message ?? "No se pudo borrar."));
     await cargar();

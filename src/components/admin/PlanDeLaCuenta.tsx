@@ -5,6 +5,7 @@ import ElegirPlan from "./ElegirPlan";
 import TipoDeInstitucion from "./TipoDeInstitucion";
 import { type PlanConcedible, SEGMENTOS, boton } from "./catalogo-tipos";
 import { fecha, llamarPanel } from "./panel-api";
+import { useDialogo } from "./Dialogo";
 
 interface Fila {
   id: number; plan_key: string; plan_name: string; plan_segment: string; plan_kind: string;
@@ -32,6 +33,7 @@ const SE_QUITA = ["a_mano", "solicitud"];
  * la app, por lo que el panel y el teléfono dicen lo mismo.
  */
 export default function PlanDeLaCuenta({ userId, onCambio }: { userId: number; onCambio?: () => void }) {
+  const dialogo = useDialogo();
   const [data, setData] = useState<Cuenta | null>(null);
   const [fallo, setFallo] = useState<string | null>(null);
   const [version, setVersion] = useState(0);
@@ -46,9 +48,10 @@ export default function PlanDeLaCuenta({ userId, onCambio }: { userId: number; o
   const recargar = (mensaje?: string) => { if (mensaje) setAviso(mensaje); setVersion((v) => v + 1); onCambio?.(); };
 
   const quitar = async (soloPack?: Fila) => {
-    if (!confirm(soloPack
-      ? `¿Quitarle ${soloPack.plan_name}? Su plan sigue igual; los alumnos que solo cabían con ese cupo pierden el PRO.`
-      : "¿Quitarle el plan asignado? Vuelve a su plan de entrada, y sus complementos se quitan con el plan.")) return;
+    const ok = await dialogo.confirmar(soloPack
+      ? { titulo: `¿Quitarle ${soloPack.plan_name}?`, boton: "Quitar", peligro: true, texto: "Su plan sigue igual. Los alumnos que solo cabían con ese cupo pierden el PRO." }
+      : { titulo: "¿Quitarle el plan asignado?", boton: "Quitar", peligro: true, texto: "Vuelve a su plan de entrada, y sus complementos se quitan con el plan." });
+    if (!ok) return;
     const r = await llamarPanel(`/admin/plan-grants/users/${userId}${soloPack ? `/addons/${soloPack.plan_key}` : ""}`, "DELETE");
     if (!r.ok) { setAviso(r.message ?? "No fue posible quitar el plan."); return; }
     recargar(soloPack ? `Se quitó ${soloPack.plan_name}.` : "Se quitó el plan asignado. Ahora tiene el plan de entrada.");

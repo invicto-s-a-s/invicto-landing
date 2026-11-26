@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { llamarPanel } from "./panel-api";
 import { Fallo, botonPeligro, botonPrincipal, entrada } from "./PiezasDeModeracion";
 import { SUSPENSION_LABEL, fechaYHora } from "./moderacion-tipos";
+import { useDialogo } from "./Dialogo";
 
 interface Estado {
   cuenta: { id: number; username: string; is_reviewer: boolean; suspendida: boolean };
@@ -16,6 +17,7 @@ interface Estado {
 
 /** Suspender y levantar, dentro de la ficha de una cuenta. Suspender no borra nada. */
 export default function SuspensionDeLaCuenta({ userId }: { userId: number }) {
+  const dialogo = useDialogo();
   const [datos, setDatos] = useState<Estado | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [ocupado, setOcupado] = useState(false);
@@ -34,7 +36,10 @@ export default function SuspensionDeLaCuenta({ userId }: { userId: number }) {
 
   const suspender = async (confirm_school = false) => {
     if (!motivo) { setError("Elige un motivo."); return; }
-    if (!confirm_school && !confirm(`¿Suspender a @${datos?.cuenta.username}?\n\nNo podrá entrar, publicar ni escribir, y dejará de verse. No se borra nada.`)) return;
+    if (!confirm_school && !(await dialogo.confirmar({
+      titulo: `¿Suspender a @${datos?.cuenta.username}?`, boton: "Suspender", peligro: true,
+      texto: "No podrá entrar, publicar ni escribir, y dejará de verse. No se borra nada.",
+    }))) return;
     setOcupado(true);
     const r = await llamarPanel(`/admin/moderation/users/${userId}/suspend`, "POST", {
       reason: motivo, public_message: mensaje || undefined, note: nota || undefined, confirm_school,
@@ -43,7 +48,7 @@ export default function SuspensionDeLaCuenta({ userId }: { userId: number }) {
     });
     setOcupado(false);
     if (!r.ok && r.code === "DUENO_DE_ESCUELA") {
-      if (confirm(`${r.message}\n\n¿Suspenderla de todos modos?`)) await suspender(true);
+      if (await dialogo.confirmar({ titulo: "Es la dueña de una escuela", texto: r.message ?? "", boton: "Suspender de todos modos", peligro: true })) await suspender(true);
       return;
     }
     setError(r.ok ? null : (r.message ?? "No se pudo suspender."));
@@ -52,7 +57,10 @@ export default function SuspensionDeLaCuenta({ userId }: { userId: number }) {
   };
 
   const levantar = async () => {
-    const note = prompt("¿Por qué se levanta la suspensión? (queda en la bitácora)");
+    const note = await dialogo.preguntar({
+      titulo: `¿Levantar la suspensión de @${datos?.cuenta.username}?`, boton: "Levantar",
+      etiqueta: "Motivo (queda en la bitácora)", texto: "Vuelve a entrar y a verse en la app.",
+    });
     if (note === null) return;
     setOcupado(true);
     const r = await llamarPanel(`/admin/moderation/users/${userId}/lift`, "POST", { note });

@@ -19,6 +19,7 @@ import SolicitudesTable from "./SolicitudesTable";
 import ModeracionPanel from "./ModeracionPanel";
 import { Permiso } from "./moderacion-tipos";
 import NavDelPanel, { grupoDe, pestana, type Tab } from "./NavDelPanel";
+import { Dialogos } from "./Dialogo";
 
 interface Me {
   id: number;
@@ -53,6 +54,7 @@ export default function AdminPanel({ me }: { me: Me }) {
   const pendientes = stats?.cuentas.verificaciones_pendientes ?? 0;
 
   return (
+    <Dialogos>
     <div className="flex min-h-screen">
       {/* ── Barra lateral ───────────────────────────────────────────────── */}
       <aside
@@ -148,5 +150,6 @@ export default function AdminPanel({ me }: { me: Me }) {
         <UserDetail userId={openUser} permisos={me.permissions} onClose={() => setOpenUser(null)} />
       )}
     </div>
+    </Dialogos>
   );
 }

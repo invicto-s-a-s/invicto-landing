@@ -5,6 +5,7 @@ import { llamarPanel } from "./panel-api";
 import EvidenciaDelReporte from "./EvidenciaDelReporte";
 import { Fallo, Filtro, Vacio, boton, botonPeligro, botonPrincipal } from "./PiezasDeModeracion";
 import { CLASE_LABEL, Clase, MOTIVO_LABEL, Pagina, Permiso, Reportado, fechaYHora } from "./moderacion-tipos";
+import { useDialogo } from "./Dialogo";
 
 const ESTADOS = [
   { value: "open", label: "Abiertos" }, { value: "removed", label: "Quitados" },
@@ -17,6 +18,7 @@ const CLASES = [
 
 /** Todo lo reportado. Sin quién reportó, y sin lo que sea de quien revisa: eso lo decide el servidor. */
 export default function ReportesTable({ permisos, onAbrirCuenta }: { permisos: readonly Permiso[]; onAbrirCuenta: (id: number) => void }) {
+  const dialogo = useDialogo();
   const [estado, setEstado] = useState<(typeof ESTADOS)[number]["value"]>("open");
   const [clase, setClase] = useState<"" | Clase>("");
   const [pagina, setPagina] = useState(1);
@@ -35,9 +37,10 @@ export default function ReportesTable({ permisos, onAbrirCuenta }: { permisos: r
 
   const resolver = async (r: Reportado, action: "dismiss" | "remove") => {
     const que = CLASE_LABEL[r.kind].toLowerCase();
-    if (!confirm(action === "remove"
-      ? `¿Quitar ${r.kind === "post" ? "esta" : "este"} ${que}?\n\nDeja de verse en la app. Su copia y sus archivos se conservan como evidencia.`
-      : "¿Descartar estos reportes?\n\nNo se quita nada y salen de los abiertos.")) return;
+    const ok = await dialogo.confirmar(action === "remove"
+      ? { titulo: `¿Quitar ${r.kind === "post" ? "esta" : "este"} ${que}?`, boton: "Quitar", peligro: true, texto: "Deja de verse en la app. Su copia y sus archivos se conservan como evidencia." }
+      : { titulo: "¿Descartar estos reportes?", boton: "Descartar", texto: "No se quita nada y salen de los abiertos." });
+    if (!ok) return;
     const clave = `${r.kind}-${r.target_id}`;
     setOcupado(clave);
     const res = await llamarPanel(`/admin/moderation/reports/${r.kind}/${r.target_id}/resolve`, "POST", { action });

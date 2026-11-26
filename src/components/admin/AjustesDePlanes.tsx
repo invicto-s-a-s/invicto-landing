@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { boton, campo } from "./catalogo-tipos";
 import { llamarPanel } from "./panel-api";
+import { useDialogo } from "./Dialogo";
 
 interface Parametro { key: string; value: string; kind: string; description: string }
 
@@ -22,6 +23,15 @@ const marcados = (v: string) => v.split(",").map((s) => s.trim().toLowerCase()).
 const alternar = (v: string, perfil: string) => {
   const hay = marcados(v);
   return PERFILES.map(([k]) => k).filter((k) => (k === perfil ? !hay.includes(k) : hay.includes(k))).join(",") || "ninguno";
+};
+
+/** El valor como lo lee una persona: «Jugadores, Ojeadores» y no «player,scout». */
+const legible = (key: string, v: string): string => {
+  if (POR_PERFIL.includes(key)) {
+    const m = marcados(v);
+    return m.length === 0 ? "Ninguno" : PERFILES.filter(([k]) => m.includes(k)).map(([, t]) => t).join(", ");
+  }
+  return OPCIONES[key]?.find(([x]) => x === v)?.[1] ?? v;
 };
 
 const TITULOS: Record<string, string> = {
@@ -56,13 +66,17 @@ export default function AjustesDePlanes() {
 }
 
 function Fila({ p, onListo }: { p: Parametro; onListo: () => Promise<void> }) {
+  const dialogo = useDialogo();
   const [valor, setValor] = useState(p.value);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const opciones = OPCIONES[p.key];
 
   const guardar = async () => {
-    if (!confirm(`¿Cambiar «${p.key}» de «${p.value}» a «${valor}»?\n\n${p.description}\n\nSe nota enseguida.`)) return;
+    if (!(await dialogo.confirmar({
+      titulo: "¿Guardar este ajuste?", cambio: { de: legible(p.key, p.value), a: legible(p.key, valor) },
+      texto: `${p.description}\n\nSe nota en la app en cerca de un minuto.`, boton: "Guardar",
+    }))) return;
     setBusy(true);
     setError(null);
     const r = await llamarPanel(`/admin/parameters/${p.key}`, "PUT", { value: valor });

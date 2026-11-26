@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { llamarPanel } from "./panel-api";
+import { useDialogo } from "./Dialogo";
 
 export interface Parametro {
   key: string;
@@ -15,6 +16,7 @@ export interface Parametro {
 
 /** Un parámetro de la app con sus opciones. Un servidor que aún no lo tiene no lo enseña. */
 export default function ParametroDelPanel({ p }: { p: Parametro }) {
+  const dialogo = useDialogo();
   const [valor, setValor] = useState<string | null>(null);
   const [escrito, setEscrito] = useState("");
   const [noHay, setNoHay] = useState(false);
@@ -32,7 +34,10 @@ export default function ParametroDelPanel({ p }: { p: Parametro }) {
 
   const guardar = async (nuevo: string) => {
     if (busy || nuevo === valor) return;
-    if (p.confirmar && nuevo !== p.opciones?.[0]?.[0] && !confirm(p.confirmar)) return;
+    if (p.confirmar && nuevo !== p.opciones?.[0]?.[0] && !(await dialogo.confirmar({
+      titulo: "¿Guardar este cambio?", texto: p.confirmar, boton: "Guardar",
+      cambio: { de: p.opciones?.find(([v]) => v === valor)?.[1] ?? valor ?? "", a: p.opciones?.find(([v]) => v === nuevo)?.[1] ?? nuevo },
+    }))) return;
     setBusy(true);
     setError(null);
     const r = await llamarPanel(`/admin/parameters/${p.key}`, "PUT", { value: nuevo });

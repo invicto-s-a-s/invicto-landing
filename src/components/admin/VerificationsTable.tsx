@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useDialogo } from "./Dialogo";
 
 interface VerificationDocument {
   id: number;
@@ -46,6 +47,7 @@ const MOTIVO_OJEADOR =
  * pestaña a tamaño completo — que es como se mira de verdad una cédula.
  */
 export default function VerificationsTable() {
+  const dialogo = useDialogo();
   const [tab, setTab] = useState("review");
   const [rows, setRows] = useState<VerificationRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,16 +68,17 @@ export default function VerificationsTable() {
     let note: string | null = null;
     if (!approved) {
       // El motivo es obligatorio: quien lo recibe tiene que saber qué corregir.
-      note = prompt(
-        `Motivo del rechazo para ${req.display_name}\n\nEste mensaje será enviado al usuario para que corrija su solicitud:`,
-        req.kind === "scout" ? MOTIVO_OJEADOR : "",
-      );
+      note = await dialogo.preguntar({
+        titulo: `Rechazar la verificación de ${req.display_name}`, boton: "Rechazar", peligro: true, obligatorio: true,
+        texto: "Le enviaremos este mensaje para que corrija su solicitud.", etiqueta: "Motivo del rechazo",
+        inicial: req.kind === "scout" ? MOTIVO_OJEADOR : "",
+      });
       if (!note?.trim()) return;
-    } else if (!confirm(
-      `Confirmar verificación de ${req.display_name}\n\n`
-      + `Recibirá la insignia oficial de ${req.kind === "scout" ? "Ojeador Verificado" : "Club Verificado"} y quedará `
-      + "habilitado para contactar jugadores, incluidos menores de edad, bajo las políticas de seguridad.\n\n¿Deseas continuar?",
-    )) {
+    } else if (!(await dialogo.confirmar({
+      titulo: `¿Verificar a ${req.display_name}?`, boton: "Verificar",
+      texto: `Recibirá la insignia oficial de ${req.kind === "scout" ? "Ojeador Verificado" : "Club Verificado"} y quedará `
+        + "habilitado para contactar jugadores, incluidos menores de edad, bajo las políticas de seguridad.",
+    }))) {
       return;
     }
 

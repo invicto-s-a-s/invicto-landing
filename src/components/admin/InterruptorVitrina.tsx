@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { llamarPanel } from "./panel-api";
+import { useDialogo } from "./Dialogo";
 
 const RUTA = "/admin/parameters/vitrina.activa";
 
@@ -18,6 +19,7 @@ const encendida = (valor: string) => valor.trim().toLowerCase() !== "false";
  * tarda en volver a pedir el plan (menos de un minuto).
  */
 export default function InterruptorVitrina() {
+  const dialogo = useDialogo();
   const [activa, setActiva] = useState<boolean | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,10 +38,10 @@ export default function InterruptorVitrina() {
 
   const cambiar = async () => {
     if (busy || activa === null) return;
-    const frase = activa
-      ? "¿Apagar la Vitrina Élite?\n\nLa lista de destacados queda vacía, nadie nuevo entra ni recibe el aviso, y la app deja de mostrar la tarjeta del inicio. El módulo de Premium sigue."
-      : "¿Encender la Vitrina Élite?\n\nLos jugadores que cumplan el Reto Vitrina vuelven a salir destacados.";
-    if (!confirm(frase)) return;
+    const ok = await dialogo.confirmar(activa
+      ? { titulo: "¿Apagar la Vitrina Élite?", boton: "Apagar", peligro: true, texto: "La lista de destacados queda vacía, nadie nuevo entra ni recibe el aviso, y la app deja de mostrar la tarjeta del inicio. El módulo de Premium sigue." }
+      : { titulo: "¿Encender la Vitrina Élite?", boton: "Encender", texto: "Los jugadores que cumplan el Reto Vitrina vuelven a salir destacados." });
+    if (!ok) return;
     setBusy(true);
     setError(null);
     const r = await llamarPanel(RUTA, "PUT", { value: activa ? "false" : "true" });

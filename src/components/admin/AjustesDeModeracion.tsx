@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { llamarPanel } from "./panel-api";
 import { Fallo, botonPrincipal, entrada } from "./PiezasDeModeracion";
+import { useDialogo } from "./Dialogo";
 
 interface Ajuste { key: string; value: string; description: string }
 
@@ -17,6 +18,7 @@ const DELICADOS: Record<string, string> = {
 };
 
 export default function AjustesDeModeracion() {
+  const dialogo = useDialogo();
   const [items, setItems] = useState<Ajuste[] | null>(null);
   const [valores, setValores] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +34,9 @@ export default function AjustesDeModeracion() {
 
   const guardar = async (a: Ajuste) => {
     const value = (valores[a.key] ?? a.value).trim();
-    if (DELICADOS[a.key] && !confirm(`${a.key} → ${value}\n\n${DELICADOS[a.key]}\n\n¿Guardar?`)) return;
+    if (DELICADOS[a.key] && !(await dialogo.confirmar({
+      titulo: "¿Guardar este cambio?", cambio: { de: a.value || "vacío", a: value || "vacío" }, texto: `${DELICADOS[a.key]}\n\n${a.key}`, boton: "Guardar",
+    }))) return;
     const r = await llamarPanel(`/admin/moderation/settings/${a.key}`, "PUT", { value });
     setError(r.ok ? null : (r.message ?? "No se pudo guardar."));
     if (r.ok) await cargar();

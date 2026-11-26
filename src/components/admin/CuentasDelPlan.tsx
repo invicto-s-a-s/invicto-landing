@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import ElegirPlan from "./ElegirPlan";
 import { type Plan, type PlanConcedible, SEGMENTOS, boton } from "./catalogo-tipos";
 import { fecha, llamarPanel } from "./panel-api";
+import { useDialogo } from "./Dialogo";
 
 interface Fila {
   cuenta: { id: number; username?: string; name?: string | null; last_name?: string | null; tipo?: string };
@@ -35,6 +36,7 @@ type Props = { plan: Plan; onAbrirCuenta: (id: number) => void; onCambio: () => 
  * lo que esas cuentas se cuentan y no se listan.
  */
 export default function CuentasDelPlan({ plan, onAbrirCuenta, onCambio }: Props) {
+  const dialogo = useDialogo();
   const [pagina, setPagina] = useState(1);
   const [data, setData] = useState<Pagina | null>(null);
   const [version, setVersion] = useState(0);
@@ -51,9 +53,10 @@ export default function CuentasDelPlan({ plan, onAbrirCuenta, onCambio }: Props)
   const quitar = async (f: Fila) => {
     const quien = f.cuenta.username ? `@${f.cuenta.username}` : `la cuenta #${f.cuenta.id}`;
     const esPack = plan.kind === "addon";
-    if (!confirm(esPack
-      ? `¿Quitarle ${plan.name} a ${quien}? Su plan sigue igual.`
-      : `¿Quitarle ${plan.name} a ${quien}? Vuelve a su plan de entrada, y sus complementos se quitan con el plan.`)) return;
+    if (!(await dialogo.confirmar({
+      titulo: `¿Quitarle ${plan.name} a ${quien}?`, boton: "Quitar", peligro: true,
+      texto: esPack ? "Su plan sigue igual." : "Vuelve a su plan de entrada, y sus complementos se quitan con el plan.",
+    }))) return;
     const r = await llamarPanel(`/admin/plan-grants/users/${f.cuenta.id}${esPack ? `/addons/${plan.key}` : ""}`, "DELETE");
     if (!r.ok) { setAviso(r.message ?? "No fue posible quitar el plan."); return; }
     listo(`Se le quitó ${plan.name} a ${quien}.`);

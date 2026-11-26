@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { RUTA_CANDADOS as RUTA, leerCandados as leer } from "./candados-abiertos";
+import { useDialogo } from "./Dialogo";
 
 /**
  * Los candados que existen, con lo que pasa al cerrarlos. Tiene que ir a la par
@@ -29,6 +30,7 @@ const CANDADOS = [
  * relee antes de escribir para no pisar el cambio de otra persona.
  */
 export default function PlanGates() {
+  const dialogo = useDialogo();
   const [abiertas, setAbiertas] = useState<Set<string> | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -52,10 +54,10 @@ export default function PlanGates() {
   const cambiar = async (key: string, nombre: string, cerrado: string) => {
     if (busy) return;
     const estaAbierta = abiertas?.has(key) ?? false;
-    const frase = estaAbierta
-      ? `¿Cerrar «${nombre}»?\n\n${cerrado}\n\nQuien no tenga el plan deja de poder usarlo en cerca de un minuto.`
-      : `¿Abrir «${nombre}» a todas las cuentas, tengan el plan que tengan?`;
-    if (!confirm(frase)) return;
+    const ok = await dialogo.confirmar(estaAbierta
+      ? { titulo: `¿Cerrar «${nombre}»?`, boton: "Cerrar", peligro: true, texto: `${cerrado}\n\nQuien no tenga el plan deja de poder usarlo en cerca de un minuto.` }
+      : { titulo: `¿Abrir «${nombre}» a todas las cuentas?`, boton: "Abrir", texto: "La podrán usar todas las cuentas, tengan el plan que tengan." });
+    if (!ok) return;
 
     setBusy(key);
     setError(null);

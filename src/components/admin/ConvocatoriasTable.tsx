@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useDialogo } from "./Dialogo";
 
 interface AdminConvocatoria {
   id: number;
@@ -27,6 +28,7 @@ const date = (iso: string | null) =>
     : "—";
 
 export default function ConvocatoriasTable() {
+  const dialogo = useDialogo();
   const [status, setStatus] = useState("");
   const [rows, setRows] = useState<AdminConvocatoria[]>([]);
   const [total, setTotal] = useState(0);
@@ -53,7 +55,10 @@ export default function ConvocatoriasTable() {
   const toggle = async (c: AdminConvocatoria) => {
     const next = c.status === "open" ? "closed" : "open";
     const verb = next === "closed" ? "Cerrar" : "Reabrir";
-    if (!confirm(`${verb} «${c.title}»?\n\nCerrar solo deja de recibir postulaciones. No borra nada ni afecta a quien ya se postuló.`)) return;
+    if (!(await dialogo.confirmar({
+      titulo: `¿${verb} «${c.title}»?`, boton: verb, peligro: next === "closed",
+      texto: next === "closed" ? "Deja de recibir postulaciones. No se borra nada y no afecta a quien ya se postuló." : "Vuelve a recibir postulaciones.",
+    }))) return;
 
     setBusy(c.id);
     await fetch(`/api/admin/admin/convocatorias/${c.id}/status`, {

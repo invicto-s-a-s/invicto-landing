@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { boton, campo, SEGMENTOS } from "./catalogo-tipos";
 import { llamarPanel } from "./panel-api";
+import { useDialogo } from "./Dialogo";
 
 interface PlanDelPaquete { key: string; name: string; segment: string; tier: number; is_active: boolean; is_private: boolean; is_default: boolean; tiene: number }
 interface Paquete { partes: { key: string; nombre: string }[]; planes: PlanDelPaquete[]; por_deshacer: number }
@@ -15,6 +16,7 @@ const RUTA = "/admin/plans/bundles/staff";
  * Alexander** (decisión del 2026-11-24).
  */
 export default function PaqueteCuerpoTecnico() {
+  const dialogo = useDialogo();
   const [d, setD] = useState<Paquete | null>(null);
   const [desde, setDesde] = useState("school_semilla");
   const [ademas, setAdemas] = useState<string[]>([]);
@@ -28,10 +30,10 @@ export default function PaqueteCuerpoTecnico() {
 
   const enviar = async (active: boolean) => {
     const base = d?.planes.find((p) => p.key === desde);
-    const frase = active
-      ? `¿Encender el cuerpo técnico desde ${base?.name} hacia arriba?\n\nLas escuelas con esos planes verán las siete partes enseguida.`
-      : "¿Apagar el cuerpo técnico?\n\nSe quita lo que este botón puso. Quien ya lo tenía de antes lo conserva, y nada de lo registrado se borra.";
-    if (!confirm(frase)) return;
+    const ok = await dialogo.confirmar(active
+      ? { titulo: `¿Encender el cuerpo técnico desde ${base?.name ?? "ese plan"}?`, boton: "Encender", texto: "Las escuelas con ese plan o uno más alto verán las siete partes enseguida." }
+      : { titulo: "¿Apagar el cuerpo técnico?", boton: "Apagar", peligro: true, texto: "Se quita lo que este botón puso. Quien ya lo tenía de antes lo conserva, y nada de lo registrado se borra." });
+    if (!ok) return;
     setBusy(true);
     const r = await llamarPanel<{ puestas?: number; quitadas?: number; quedan?: unknown[] }>(RUTA, "PUT", active ? { active, from: desde, also: ademas } : { active });
     setBusy(false);
