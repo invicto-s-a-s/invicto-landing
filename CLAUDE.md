@@ -7,7 +7,7 @@ This is a modern, high-performance landing page for INVICTO, a social scouting p
 **Status**: Production-ready landing page with download CTAs and modal flows
 
 ## Tech Stack
-- **Framework**: Next.js 16.2.6 (App Router)
+- **Framework**: Next.js 16.4.6 (App Router)
 - **React**: 19.2.4 with TypeScript
 - **Styling**: Tailwind CSS 4 with custom CSS variables for theming
 - **Animations**: Framer Motion 12.40.0
@@ -210,6 +210,16 @@ src/components/admin/viz/         ← AreaChart, RoleBars, FunnelBars, palette
   llamaría a lo que quisiera desde la consola del navegador
 - **El login es el mismo `POST /auth` de la app.** Lo que distingue a quien pasa
   es `GET /admin/me`, y la cookie no se escribe si eso falla
+- **Las escrituras del proxy solo valen si nacen en el panel** (`src/lib/mismo-origen.ts`,
+  auditoría 2026-11-26, M9). La cookie es `SameSite=Lax` y `invictoapp.com` es el mismo
+  *sitio* que `admin.invictoapp.com`: un script de la landing podía escribir con la sesión
+  de un revisor. POST/PUT/DELETE exigen `Sec-Fetch-Site: same-origin` (o, si no viene,
+  `Origin` igual al host); si no, 403. Las lecturas no lo piden
+- **Cabeceras de seguridad** en todo (`next.config.ts`): `frame-ancestors 'none'`,
+  `X-Frame-Options`, `nosniff`, HSTS. No hay CSP de scripts a propósito: una mal puesta
+  deja el panel en blanco, y hay que probarla página por página
+- La redirección del middleware arma la URL con `pathname`, nunca resolviendo el camino
+  contra una base: `new URL("//otro.sitio", base)` mandaba a otro dominio
 - **El panel es de solo lectura**, salvo abrir o cerrar una convocatoria y
   aprobar o rechazar una verificación
 
