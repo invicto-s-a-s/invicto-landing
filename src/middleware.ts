@@ -35,7 +35,13 @@ export function middleware(request: NextRequest) {
     // landing— se sirve desde el dominio principal y no tiene por qué existir
     // en dos sitios: duplicarlo confunde a Google y no aporta nada.
     if (!pathname.startsWith("/admin") && !pathname.startsWith("/api/admin")) {
-      return NextResponse.redirect(new URL(pathname, `https://${PRODUCTION_HOSTS[0]}`));
+      // El camino se pone en una URL fija, no se resuelve contra ella: con
+      // `new URL("//otro.sitio", base)` el destino era otro dominio
+      // (auditoría 2026-11-26).
+      const destino = new URL(`https://${PRODUCTION_HOSTS[0]}`);
+      destino.pathname = pathname;
+      destino.search = request.nextUrl.search;
+      return NextResponse.redirect(destino);
     }
     return rememberNotToIndex(NextResponse.next());
   }

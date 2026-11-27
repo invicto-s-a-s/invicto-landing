@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { apiFetch } from "@/lib/admin-api";
+import { vieneDelPanel } from "@/lib/mismo-origen";
 
 /**
  * Lo único que el panel puede alcanzar de la API.
@@ -49,6 +50,9 @@ export async function GET(request: Request, ctx: Ctx) {
 
 /** Las escrituras: mismo camino, misma lista, cambia el método. */
 async function escribir(method: "POST" | "PUT" | "DELETE", request: Request, ctx: Ctx) {
+  if (!vieneDelPanel(request)) {
+    return NextResponse.json({ message: "Esta acción solo se puede hacer desde el panel." }, { status: 403 });
+  }
   const { path } = await ctx.params;
   const to = target(path);
   if (!to) return invalida();
