@@ -1,8 +1,11 @@
-export type Permiso = "reportes" | "evidencia" | "suspender" | "usuarios" | "solicitudes" | "ajustes" | "permisos";
+/** Los del servidor (`PERMISOS_DE_REVISOR`). Los cinco últimos son uno por pestaña (M1, 2026-11-27). */
+export type Permiso = "reportes" | "evidencia" | "suspender" | "usuarios" | "solicitudes" | "ajustes" | "permisos"
+  | "panorama" | "verificaciones" | "planes" | "menores" | "escuelas";
 
 export const PERMISO_LABEL: Record<Permiso, string> = {
   reportes: "Reportes", evidencia: "Evidencia", suspender: "Suspender", usuarios: "Usuarios",
   solicitudes: "Solicitudes", ajustes: "Ajustes", permisos: "Permisos",
+  panorama: "Panorama", verificaciones: "Verificaciones", planes: "Planes", menores: "Menores y salud", escuelas: "Escuelas",
 };
 
 export type Clase = "post" | "user" | "comment" | "message";

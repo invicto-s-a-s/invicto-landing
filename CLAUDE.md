@@ -215,6 +215,10 @@ src/components/admin/viz/         ← AreaChart, RoleBars, FunnelBars, palette
   *sitio* que `admin.invictoapp.com`: un script de la landing podía escribir con la sesión
   de un revisor. POST/PUT/DELETE exigen `Sec-Fetch-Site: same-origin` (o, si no viene,
   `Origin` igual al host); si no, 403. Las lecturas no lo piden
+- **Cada pestaña declara su `permiso`** en `NavDelPanel.tsx` (`panorama`, `verificaciones`, `planes`,
+  `menores`, `escuelas`, más los de moderación); si la elegida no se ve, se abre la primera que sí. El
+  servidor lo exige igual en cada ruta: esconder la pestaña es solo para no ofrecer lo que da 403.
+  Se despliega **después** del servidor: con el de antes, las pestañas nuevas no saldrían
 - **Cabeceras de seguridad** en todo (`next.config.ts`): `frame-ancestors 'none'`,
   `X-Frame-Options`, `nosniff`, HSTS. No hay CSP de scripts a propósito: una mal puesta
   deja el panel en blanco, y hay que probarla página por página

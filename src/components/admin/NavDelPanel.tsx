@@ -13,28 +13,28 @@ import type { Permiso } from "./moderacion-tipos";
  */
 export const GRUPOS = [
   { id: "panorama", label: "Panorama", icon: "insights", tabs: [
-    { value: "resumen", label: "Resumen", icon: "dashboard" },
-    { value: "actividad", label: "Actividad", icon: "monitoring" },
-    { value: "lideres", label: "Líderes", icon: "emoji_events" },
+    { value: "resumen", label: "Resumen", icon: "dashboard", permiso: ["panorama"] },
+    { value: "actividad", label: "Actividad", icon: "monitoring", permiso: ["panorama"] },
+    { value: "lideres", label: "Líderes", icon: "emoji_events", permiso: ["panorama"] },
   ] },
   { id: "cuentas", label: "Cuentas", icon: "group", tabs: [
     { value: "usuarios", label: "Usuarios", icon: "person_search" },
-    { value: "verificaciones", label: "Verificaciones", icon: "verified_user" },
+    { value: "verificaciones", label: "Verificaciones", icon: "verified_user", permiso: ["verificaciones"] },
     { value: "suspendidas", label: "Suspendidas", icon: "block", permiso: ["suspender"] },
-    { value: "menores", label: "Menores y salud", icon: "family_restroom" },
+    { value: "menores", label: "Menores y salud", icon: "family_restroom", permiso: ["menores"] },
   ] },
   { id: "moderacion", label: "Moderación", icon: "shield", tabs: [
     { value: "reportes", label: "Reportes", icon: "flag", permiso: ["reportes"] },
     { value: "moderacion", label: "Ajustes", icon: "tune", permiso: ["ajustes", "permisos"] },
   ] },
   { id: "negocio", label: "Planes y clientes", icon: "sell", tabs: [
-    { value: "planes", label: "Planes", icon: "sell" },
+    { value: "planes", label: "Planes", icon: "sell", permiso: ["planes"] },
     { value: "solicitudes", label: "Solicitudes de la web", icon: "inbox", permiso: ["solicitudes"] },
-    { value: "convocatorias", label: "Convocatorias", icon: "campaign" },
+    { value: "convocatorias", label: "Convocatorias", icon: "campaign", permiso: ["escuelas"] },
   ] },
   { id: "escuelas", label: "Escuelas", icon: "school", tabs: [
-    { value: "listas", label: "Listas base", icon: "checklist" },
-    { value: "uniones", label: "Uniones", icon: "merge" },
+    { value: "listas", label: "Listas base", icon: "checklist", permiso: ["escuelas"] },
+    { value: "uniones", label: "Uniones", icon: "merge", permiso: ["escuelas"] },
   ] },
 ] as const;
 
@@ -44,10 +44,15 @@ export type Tab = Pestana["value"];
 export const pestana = (t: Tab): Pestana | undefined => GRUPOS.flatMap((g) => g.tabs as readonly Pestana[]).find((p) => p.value === t);
 export const grupoDe = (t: Tab) => GRUPOS.find((g) => (g.tabs as readonly Pestana[]).some((p) => p.value === t));
 
-/** Las de siempre no piden permiso, salvo «Usuarios». Quien decide de verdad es cada ruta del servidor. */
-function seVe(t: Pestana, permisos: readonly Permiso[] | undefined): boolean {
+/** Cada pestaña pide su permiso, salvo «Usuarios», que se mira aparte. Quien decide de verdad es cada ruta del servidor. */
+export function seVe(t: Pestana, permisos: readonly Permiso[] | undefined): boolean {
   if ("permiso" in t) return !!permisos && t.permiso.some((p) => permisos.includes(p));
   return t.value !== "usuarios" || !permisos || permisos.includes("usuarios");
+}
+
+/** La primera pestaña que esta persona ve: «Resumen» pide Panorama y no todos lo tienen. */
+export function primeraVisible(permisos: readonly Permiso[] | undefined): Tab | undefined {
+  return GRUPOS.flatMap((g) => g.tabs as readonly Pestana[]).find((t) => seVe(t, permisos))?.value;
 }
 
 const GUARDADO = "panel-carpetas";

@@ -18,7 +18,7 @@ import SuspendidasTable from "./SuspendidasTable";
 import SolicitudesTable from "./SolicitudesTable";
 import ModeracionPanel from "./ModeracionPanel";
 import { Permiso } from "./moderacion-tipos";
-import NavDelPanel, { grupoDe, pestana, type Tab } from "./NavDelPanel";
+import NavDelPanel, { grupoDe, pestana, primeraVisible, seVe, type Tab } from "./NavDelPanel";
 import { Dialogos } from "./Dialogo";
 
 interface Me {
@@ -31,7 +31,10 @@ interface Me {
 
 export default function AdminPanel({ me }: { me: Me }) {
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>("resumen");
+  const [elegida, setTab] = useState<Tab>("resumen");
+  // Si la elegida no se ve con sus permisos (sin Panorama, «Resumen»), la primera que sí.
+  const vista = pestana(elegida);
+  const tab: Tab = vista && seVe(vista, me.permissions) ? elegida : primeraVisible(me.permissions) ?? elegida;
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [failed, setFailed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
