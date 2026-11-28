@@ -38,8 +38,13 @@ const PARA: Record<Pagina, [string, string, string]> = {
     "Ves esta página porque eres el acudiente registrado del jugador en esta escuela.",
     "Si no respondes, no se autoriza nada.",
   ],
+  plan: [
+    "para solicitar tu aprobación",
+    "Ves esta página porque el jugador te registró como su acudiente y te enviamos este enlace a tu correo.",
+    "Si no respondes, no se solicita nada.",
+  ],
 };
-type Pagina = "acudiente" | "autorizar" | "ausencia" | "citacion" | "cobro" | "vitrina";
+type Pagina = "acudiente" | "autorizar" | "ausencia" | "citacion" | "cobro" | "vitrina" | "plan";
 
 export function PieDeFamilia({ pagina, escuela }: { pagina: Pagina; escuela?: string | null }) {
   const [para, respaldo, baja] = PARA[pagina];

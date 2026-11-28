@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { MarcoDeEnlace } from "@/components/MarcoDeEnlace";
+import { PieDeFamilia } from "@/components/PieDeFamilia";
 import PlanActions from "./PlanActions";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://api.invictoapp.com";
@@ -119,6 +120,7 @@ export default async function PlanAcudientePage({ params }: Props) {
       ) : (
         <PlanActions token={token} jugador={s.jugador} plan={s.plan} />
       )}
+      <PieDeFamilia pagina="plan" />
     </MarcoDeEnlace>
   );
 }
