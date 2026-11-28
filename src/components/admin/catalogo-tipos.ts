@@ -4,6 +4,11 @@ export interface Feature {
   bool_value: boolean | null; limit_value: number | null; text_value: string | null; feature_active: boolean;
   /** Si el código la pregunta. Lo manda el servidor desde 2026-11-12; sin él, no se dice nada. */
   en_uso?: boolean;
+  /**
+   * La app la enseña como «Próximamente». Es de la capacidad, no del plan: vale
+   * para todos los planes que la traen. Lo manda el servidor desde 2026-11-27.
+   */
+  coming_soon?: boolean;
 }
 export interface Plan {
   key: string; name: string; segment: string; kind: string; tier: number;
@@ -32,7 +37,8 @@ export type Edicion =
   | { tipo: "privado"; plan: Plan }
   | { tipo: "añadir"; plan: Plan }
   | { tipo: "capacidad"; plan: Plan; f: Feature }
-  | { tipo: "quitar"; plan: Plan; f: Feature };
+  | { tipo: "quitar"; plan: Plan; f: Feature }
+  | { tipo: "pronto"; plan: Plan; f: Feature };
 
 /** Una línea de lo que el plan enseña en la app («destacados»). Es contenido, no permisos. */
 export interface Linea {

@@ -71,7 +71,7 @@ export default function PlanCatalog() {
     if (edicion.tipo === "añadir") {
       return enCapacidades ? <AnadirCapacidad key={`añadir-${p.key}`} plan={p} guardar={guardar} cerrar={cerrar} /> : null;
     }
-    const esDeCapacidad = edicion.tipo === "capacidad" || edicion.tipo === "quitar";
+    const esDeCapacidad = edicion.tipo === "capacidad" || edicion.tipo === "quitar" || edicion.tipo === "pronto";
     if (esDeCapacidad !== enCapacidades) return null;
     const clave = `${edicion.tipo}-${p.key}-${esDeCapacidad ? edicion.f.feature_key : ""}`;
     return <EditorDelCatalogo key={clave} edicion={edicion} abiertas={abiertas} guardar={guardar} cerrar={cerrar} />;

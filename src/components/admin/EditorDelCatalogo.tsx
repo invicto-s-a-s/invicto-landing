@@ -23,7 +23,7 @@ export default function EditorDelCatalogo({ edicion, abiertas, guardar, cerrar }
   const [monto, setMonto] = useState("");
   const [deLista, setDeLista] = useState(true);
   const [desde, setDesde] = useState(hoyLocal());
-  const f = edicion.tipo === "capacidad" || edicion.tipo === "quitar" ? edicion.f : null;
+  const f = edicion.tipo === "capacidad" || edicion.tipo === "quitar" || edicion.tipo === "pronto" ? edicion.f : null;
   const [sinTope, setSinTope] = useState(f?.limit_value === null);
   const [tope, setTope] = useState(f?.limit_value === null || f?.limit_value === undefined ? "" : String(f.limit_value));
   const [texto, setTexto] = useState(f?.text_value ?? "");
@@ -127,6 +127,29 @@ export default function EditorDelCatalogo({ edicion, abiertas, guardar, cerrar }
   } else if (edicion.tipo === "añadir") {
     // Lo pinta `AnadirCapacidad`, que necesita el vocabulario entero.
     return null;
+  } else if (edicion.tipo === "pronto") {
+    // Es de la capacidad, no del plan: la ruta no lleva el plan.
+    const c = edicion.f;
+    const marcar = !c.coming_soon;
+    cuerpo = (
+      <>
+        <p className="text-sm">
+          {marcar
+            ? `¿Marcar «${c.description}» como «Próximamente»? La app la mostrará como una vista previa, sin poder usarla todavía.`
+            : `¿Marcar «${c.description}» como disponible? La app dejará de mostrar «Próximamente» y la ofrecerá como lista para usar.`}
+        </p>
+        <p className="text-xs text-[#FFB020]">
+          El cambio vale para todos los planes que tienen esta capacidad, no solo para {p.name}. Se nota en la app en cerca de un minuto.
+        </p>
+        {!marcar && c.en_uso === false && (
+          <p className="text-xs text-[#FF5A5A]">
+            El código no consulta esta casilla. Si la función todavía no existe en la app, las personas la verán lista para usar, pero no hará nada.
+          </p>
+        )}
+        {pie(marcar ? "Marcar como «Próximamente»" : "Marcar como disponible", () =>
+          void enviar(`/api/admin/admin/plans/features/${c.feature_key}/coming-soon`, "PUT", { coming_soon: marcar }))}
+      </>
+    );
   } else if (edicion.tipo === "quitar") {
     cuerpo = (
       <>

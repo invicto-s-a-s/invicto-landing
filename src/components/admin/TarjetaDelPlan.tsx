@@ -5,13 +5,7 @@ import LineasDelPlan from "./LineasDelPlan";
 import CuentasDelPlan from "./CuentasDelPlan";
 import { type Conteo, type Edicion, type Plan, estadoDe, pesos, valorDe } from "./catalogo-tipos";
 
-const MARCA = {
-  sin_efecto: {
-    texto: "Sin efecto",
-    ayuda: "El código no consulta esta casilla: cambiarla no cambia nada. Casi todas son lo que los planes anuncian como «Próximamente»; la corona y el número de visitas sí funcionan, pero no dependen de ella.",
-  },
-  abierta: { texto: "Abierta para todos", ayuda: "Es un candado abierto: este valor se aplica cuando lo cierres en Candados." },
-} as const;
+const ABIERTA = { texto: "Abierta para todos", ayuda: "Es un candado abierto: este valor se aplica cuando lo cierres en Candados." };
 
 type Props = {
   p: Plan;
@@ -91,10 +85,17 @@ export default function TarjetaDelPlan({ p, conteo, abiertas, abierto, onAbrir, 
                 <span className={`flex-1 min-w-0 ${estado === "sin_efecto" ? "text-on-surface-variant" : ""}`}>
                   {f.description} <span className="text-on-surface-variant">({f.feature_key})</span>
                 </span>
-                {estado && (
-                  <span title={MARCA[estado].ayuda} className={`px-2 py-0.5 rounded-md whitespace-nowrap ${estado === "abierta" ? "bg-neon/10 text-neon" : "bg-[#1A1A1A] text-[#FFB020]"}`}>
-                    {MARCA[estado].texto}
-                  </span>
+                {estado === "abierta" && (
+                  <span title={ABIERTA.ayuda} className="px-2 py-0.5 rounded-md whitespace-nowrap bg-neon/10 text-neon">{ABIERTA.texto}</span>
+                )}
+                {f.coming_soon !== undefined && (
+                  <button
+                    onClick={() => editar({ tipo: "pronto", plan: p, f })}
+                    title="Cómo la muestra la app. Toca para cambiarlo."
+                    className={`px-2.5 py-1 rounded-lg whitespace-nowrap ${f.coming_soon ? "bg-[#FFB020]/10 text-[#FFB020]" : "bg-neon/10 text-neon"}`}
+                  >
+                    {f.coming_soon ? "Próximamente" : "Ya funciona"}
+                  </button>
                 )}
                 <button onClick={() => editar({ tipo: "capacidad", plan: p, f })} className="px-2.5 py-1 rounded-lg bg-[#1A1A1A] whitespace-nowrap">
                   {valorDe(f)}
